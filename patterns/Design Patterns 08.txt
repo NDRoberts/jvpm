@@ -1,0 +1,167 @@
+Design Patterns 08 
+
+
+Template Method 
+
+
+
+
+Wikipedia 
+
+
+• 
+Behavioral design pattern that defines the 
+program skeleton of an algorithm in an 
+operation, deferring some steps to subclasses 
+• 
+It lets one redefine certain steps of an 
+algorithm without changing the algorithm's 
+structure 
+
+Book 
+
+
+• 
+Defines the skeleton of an algorithm in a 
+method, deferring some steps to a subclass 
+• 
+Lets subclasses define certain steps without 
+changing the algorithm’s structure 
+
+UML 
+Sample code
+1
+public abstract class CrossCompiler {
+2
+  public final void crossCompile() {
+3
+    collectSource();
+4
+    compileToTarget();
+5
+  }
+6
+  //Template methods
+7
+  protected abstract void collectSource();
+8
+  protected abstract void compileToTarget();
+9
+}
+Next we'll create two specific implementations of our cross compiler, for iPhone and for Android: 
+1
+public class IPhoneCompiler extends CrossCompiler {
+2
+  protected void collectSource() {
+3
+    //anything specific to this class
+4
+  }
+5
+  protected void compileToTarget() {
+6
+    //iphone specific compilation
+7
+  }
+8
+}
+1
+public class AndroidCompiler extends CrossCompiler {
+2
+  protected void collectSource() {
+3
+    //anything specific to this class
+4
+  }
+5
+  protected void compileToTarget() {
+6
+    //android specific compilation
+7
+  }
+8
+}
+To complete this example, here is how you would use your cross compilers
+1
+public class Client {
+2
+  public static void main(String[] args) {
+3
+    CrossCompiler iphone = new IPhoneCompiler();
+4
+    iphone.crossCompile();
+5
+    CrossCompiler android = new AndroidCompiler();
+6
+    android.crossCompile();
+7
+  }
+8
+}
+
+
+Hot Beverage 
+
+• 
+For both coffee and tea 
+– 
+Boil water (same, in base class) 
+– 
+Use hot water to extract (different, abstract in 
+base class) 
+– 
+Pour into cup (same) 
+– 
+Add condiments (different) 
+• 
+prepareRecipe is template method 
+
+prepareRecipe 
+
+• 
+Is template method 
+• 
+All steps present 
+• 
+Some are handled by base class 
+• 
+Some by subclass 
+
+Hooks 
+
+
+• 
+Can define concrete methods that do nothing 
+unless subclass overrides them 
+• 
+Use abstract when subclass must implement, 
+hooks when optional 
+
+Hollywood Principle 
+
+
+• 
+Don’t call us, we’ll call you 
+• 
+Low-level hooks into system, high-level calls at 
+the appropriate time 
+• 
+Java Arrays.sort calls compareTo() 
+
+Summary 
+
+• 
+To prevent subclasses from changing the 
+algorithm, make the template method final 
+• 
+Both the strategy and template patterns 
+encapsulate algorithms 
+– 
+Strategy via composition 
+– 
+Template via inheritance 
+• 
+Factory is a very specialized template 
+– 
+Returns result from subclass 
+
