@@ -1,0 +1,225 @@
+Design Patterns 09 
+
+
+Iterator and Composite 
+
+
+
+
+Iterator Pattern 
+
+
+• 
+Provides a way to access the elements of an 
+aggregate object sequentially without 
+exposing the underlying representation 
+• 
+This places the task of traversal on the iterator 
+object, not on the aggregate, which simplifies 
+the aggregate interface and implementation, 
+and places the responsibility where it should 
+be 
+
+UML 
+Sample Code
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class RangeIteratorExample {
+    public static Iterator<Integer> range(int start, int end) {
+        return new Iterator<>() {
+            private int index = start;
+      
+            @Override
+            public boolean hasNext() {
+                return index < end;
+            }
+
+            @Override
+            public Integer next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                return index++;
+            }
+        };
+    }
+    
+    public static void main(String[] args) {
+        var iterator = range(0, 10);
+        while(iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+        
+        // or using a lambda
+        iterator.forEachRemaining(System.out::println);
+    }
+}
+As of Java 5, objects implementing the Iterable interface, which returns an Iterator from its only method, can be traversed using Java's foreach loop syntax. The Collection interface from the Java collections framework extends Iterable.
+Example of class Family implementing the Iterable interface:
+import java.util.Iterator;
+import java.util.Set;
+
+class Family<E> implements Iterable<E> {
+    private final Set<E> elements;
+  
+    public Family(Set<E> elements) {
+      this.elements = Set.copyOf(elements);
+    }
+    
+    @Override
+    public Iterator<E> iterator() {
+        return elements.iterator();
+    }
+}
+The class IterableExample demonstrates the use of class Family :
+public class IterableExample {
+    public static void main(String[] args) {
+        var weasleys = Set.of(
+            "Arthur", "Molly", "Bill", "Charlie",
+            "Percy", "Fred", "George", "Ron", "Ginny"
+            );
+        var family = new Family<>(weasleys);
+    
+        for (var name : family) {
+            System.out.println(name + " Weasley");
+        }
+    }
+}
+Output:
+Ron Weasley
+Molly Weasley
+Percy Weasley
+Fred Weasley
+Charlie Weasley
+George Weasley
+Arthur Weasley
+Ginny Weasley
+Bill Weasley
+
+
+
+Java 
+
+
+• 
+Enumeration is the older that has been 
+replaced by Iterator 
+– 
+Iterator allows removal 
+
+Design Principle 
+
+
+• 
+A class should have only one reason to change 
+– 
+Single-responsibility principle 
+• 
+High cohesion 
+– 
+All methods related to purpose 
+
+Composite Pattern 
+
+
+• 
+Allows you to compose objects into tree 
+structures to represent part/whole hierarchies 
+• 
+Composite allows clients to treat individual 
+objects and compositions of objects uniformly 
+• 
+We can apply the same operations over both 
+composites and individual objects 
+• 
+Can ignore differences between the two 
+• 
+Think recursion 
+
+UML 
+Sample code
+/** "Component" */
+interface Graphic {
+
+    //Prints the graphic.
+    public void print();
+}
+
+/** "Composite" */
+class CompositeGraphic implements Graphic {
+
+    //Collection of child graphics.
+    private List<Graphic> childGraphics = new ArrayList<Graphic>();
+
+    //Prints the graphic.
+    public void print() {
+        for (Graphic graphic : childGraphics) {
+            graphic.print();  //Delegation
+        }
+    }
+
+    //Adds the graphic to the composition.
+    public void add(Graphic graphic) {
+        childGraphics.add(graphic);
+    }
+
+    //Removes the graphic from the composition.
+    public void remove(Graphic graphic) {
+        childGraphics.remove(graphic);
+    }
+}
+
+/** "Leaf" */
+class Ellipse implements Graphic {
+
+    //Prints the graphic.
+    public void print() {
+        System.out.println("Ellipse");
+    }
+}
+
+/** Client */
+public class Program {
+
+    public static void main(String[] args) {
+        //Initialize four ellipses
+        Ellipse ellipse1 = new Ellipse();
+        Ellipse ellipse2 = new Ellipse();
+        Ellipse ellipse3 = new Ellipse();
+        Ellipse ellipse4 = new Ellipse();
+
+        //Initialize three composite graphics
+        CompositeGraphic graphic = new CompositeGraphic();
+        CompositeGraphic graphic1 = new CompositeGraphic();
+        CompositeGraphic graphic2 = new CompositeGraphic();
+
+        //Composes the graphics
+        graphic1.add(ellipse1);
+        graphic1.add(ellipse2);
+        graphic1.add(ellipse3);
+
+        graphic2.add(ellipse4);
+
+        graphic.add(graphic1);
+        graphic.add(graphic2);
+
+        //Prints the complete graphic (Four times the string "Ellipse").
+        graphic.print();
+    }
+}
+
+
+
+Part/Whole 
+
+
+• 
+Animals, mammals, cats, … 
+– 
+Respiration, locomotion, etc. 
+• 
+Objects in a scene 
+– 
+Texture, placement, etc. 
+
