@@ -1,0 +1,607 @@
+Effective Java 
+Chapter 2 
+
+
+
+
+Consider Static Factory Methods Instead of 
+Constructors 
+
+
+• 
+One advantage is they have names 
+– 
+Constructors do not and one has to differentiate 
+via parameters 
+– 
+This can be confusing and lead to errors 
+• 
+A class can have only one constructor with a 
+given name 
+– 
+Don’t change order of constructor parameters to 
+differentiate 
+2
+
+© Steve Beaty and others 
+
+
+Consider Static Factory Methods Instead of 
+Constructors 
+
+
+• 
+Static factory methods don’t have to create a 
+new object 
+– 
+Constructors always do 
+– 
+Maybe there’s an object already created that 
+works 
+– 
+Helps with immutable classes and pre-constructed 
+instances 
+• 
+Singletons, flyweights, non-instantiable 
+3
+
+© Steve Beaty and others 
+
+
+Consider Static Factory Methods Instead of 
+Constructors 
+
+
+• 
+Can return a subtype 
+– 
+java.util.collections contains all static methods 
+that work on many types 
+– 
+Polymorphic 
+– 
+addAll, binarySearch, disjoint, frequency, min, 
+max, sort, shuffle, reverse, … 
+– 
+Type returned can be non-public 
+– 
+Can vary implementation 
+4
+
+© Steve Beaty and others 
+
+
+Consider Static Factory Methods Instead of 
+Constructors 
+
+
+• 
+Returned class need not exist at the time the 
+class is written 
+– 
+Allows run-time specification 
+– 
+JDBC an example 
+5
+
+© Steve Beaty and others 
+
+
+Service-Provider Framework 
+
+
+• 
+Service interface 
+• 
+Provider registration 
+• 
+Service access 
+6
+
+© Steve Beaty and others 
+
+
+Consider Static Factory Methods Instead of 
+Constructors 
+
+
+• 
+Disadvantages 
+– 
+Classes without public or protected constructors 
+cannot be sub-classed 
+– 
+Not called out in Javadoc 
+• 
+Popular Java static factory name 
+– 
+valueOf, getInstance, newInstance, getType, … 
+7
+
+© Steve Beaty and others 
+
+
+Consider a Builder when Faced with Many 
+Constructor Parameters 
+
+
+• 
+If a class has many fields that need initializing, 
+constructors have long list of parameters 
+– 
+Constructors often chained/telescoped 
+8
+
+© Steve Beaty and others 
+
+
+public class NutritionFacts { 
+private final int servingSize; // (mL) required 
+private final int servings; // (per container) required 
+private final int calories; // optional 
+private final int fat; // (g) optional 
+private final int sodium; // (mg) optional 
+private final int carbohydrate; // (g) optional 
+
+public NutritionFacts(int servingSize, int servings) { 
+this(servingSize, servings, 0); 
+} 
+
+9
+
+© Steve Beaty and others 
+
+
+public NutritionFacts(int servingSize, int servings, 
+int calories) { 
+this(servingSize, servings, calories, 0); 
+} 
+
+public NutritionFacts(int servingSize, int servings, 
+int calories, int fat) { 
+this(servingSize, servings, calories, fat, 0); 
+} 
+
+public NutritionFacts(int servingSize, int servings, int calories, int fat, 
+int sodium) { 
+this(servingSize, servings, calories, fat, sodium, 0); 
+} 
+
+10 
+
+© Steve Beaty and others 
+
+
+public NutritionFacts(int servingSize, int servings, 
+
+int calories, int fat, int sodium, int carbohydrate) { 
+this.servingSize = servingSize; 
+this.servings = servings; 
+this.calories = calories; 
+this.fat = fat; 
+this.sodium = sodium; 
+this.carbohydrate = carbohydrate; 
+
+
+} 
+
+public static void main(String[] args) { 
+NutritionFacts cocaCola = new NutritionFacts(240, 8, 100, 0, 35, 27); 
+} 
+} 
+
+11 
+
+© Steve Beaty and others 
+
+
+Consider a Builder when Faced with Many 
+Constructor Parameters 
+
+
+• 
+Create empty instance and have many set()s 
+– 
+Problem: instance in inconsistent state 
+• 
+Builder pattern 
+• 
+build() is a parameter-less static method 
+• 
+Required parameters passed in to constructor 
+– 
+Optionals set() 
+– 
+Other languages have optional parameters instead 
+12 
+
+© Steve Beaty and others 
+
+
+public class NutritionFacts { 
+private final int servingSize; 
+private final int servings; 
+private final int calories; 
+private final int fat; 
+private final int sodium; 
+private final int carbohydrate; 
+
+public static class Builder { 
+private final int servingSize; 
+private final int servings; 
+
+13 
+
+© Steve Beaty and others 
+
+
+// Optional parameters -initialized to default values 
+
+private int calories = 0; 
+private int fat = 0; 
+private int carbohydrate = 0; 
+private int sodium = 0; 
+
+public Builder(int servingSize, int servings) { 
+this.servingSize = servingSize; 
+this.servings = servings; 
+
+} 
+
+public Builder calories(int val) { 
+calories = val; 
+return this; 
+
+} 
+
+14 
+
+© Steve Beaty and others 
+
+
+public Builder fat(int val) { 
+fat = val; 
+return this; 
+
+} 
+
+public Builder carbohydrate(int val) { 
+carbohydrate = val; 
+return this; 
+
+} 
+
+public Builder sodium(int val) { 
+sodium = val; 
+return this; 
+
+} 
+
+15 
+
+© Steve Beaty and others 
+
+
+public NutritionFacts build() { 
+return new NutritionFacts(this); 
+} 
+} 
+
+private NutritionFacts(Builder builder) { 
+servingSize = builder.servingSize; 
+servings = builder.servings; 
+calories = builder.calories; 
+fat = builder.fat; 
+sodium = builder.sodium; 
+carbohydrate = builder.carbohydrate; 
+
+} 
+
+16 
+
+© Steve Beaty and others 
+
+
+public static void main(String[] args) { 
+
+NutritionFacts cocaCola = 
+new NutritionFacts.Builder(240,8). 
+calories(100).sodium(35).carbohydrate(27).build(); 
+
+} 
+} 
+
+17 
+
+© Steve Beaty and others 
+
+
+Enforce the Singleton Property with a Private 
+
+
+Constructor or an Enum Type 
+
+• 
+Up to 1.5, two ways to ensure only a single 
+instance of an object 
+18 
+
+© Steve Beaty and others 
+
+
+Private No-Arg Constructor 
+
+
+public class Elvis { 
+public static final Elvis INSTANCE = new Elvis(); 
+
+private Elvis() {} 
+
+public void leaveTheBuilding() { 
+System.out.println("Whoa baby, I'm outta here!"); 
+} 
+
+public static void main(String[] args) { 
+Elvis elvis = Elvis.INSTANCE; 
+elvis.leaveTheBuilding(); 
+
+
+} 
+} 
+
+19 
+
+© Steve Beaty and others 
+
+
+Static Factory 
+
+
+public class Elvis { 
+private static final Elvis INSTANCE = new Elvis(); 
+private Elvis() {} 
+public static Elvis getInstance() { 
+
+return INSTANCE; 
+} 
+
+
+public void leaveTheBuilding() { 
+System.out.println("Whoa baby, I'm outta here!"); 
+} 
+
+public static void main(String[] args) { 
+Elvis elvis = Elvis.getInstance(); 
+elvis.leaveTheBuilding(); 
+
+
+} 
+} 
+
+20 
+
+© Steve Beaty and others 
+
+
+1.5: Enumeration 
+public enum Elvis { 
+INSTANCE; 
+
+public void leaveTheBuilding() { 
+System.out.println("Whoa baby, I'm outta here!"); 
+} 
+
+public static void main(String[] args) { 
+Elvis elvis = Elvis.INSTANCE; 
+elvis.leaveTheBuilding(); 
+
+
+} 
+} 
+
+21 
+
+© Steve Beaty and others 
+
+
+Enforce Non-Instantiability with Private 
+Constructor 
+
+
+• 
+Just have a private no-args constructor 
+– 
+If have any no-args constructor, the default isn’t 
+created 
+• 
+Class cannot be sub-classed 
+– 
+Sub-classes would need to call constructor 
+• 
+Might want to have constructor throw an 
+AssertionError 
+– 
+Just to be safe 
+22 
+
+© Steve Beaty and others 
+
+
+Avoid Creating Unnecessary Objects 
+
+
+• 
+Use literals and valueOf() 
+23 
+
+© Steve Beaty and others 
+
+
+Why So Slow? 
+
+
+public class Sum { 
+
+public static void main(String[] args) { 
+
+
+Long sum = 0L; 
+
+for (long i = 0; i < Integer.MAX_VALUE; i++) { 
+
+sum += i; 
+
+} 
+
+System.out.println(sum); 
+
+} 
+} 
+
+
+24 
+
+© Steve Beaty and others 
+
+
+So 
+
+
+• 
+Prefer primitives to boxed primitives 
+• 
+Be careful of unintended auto-boxing 
+25 
+
+© Steve Beaty and others 
+
+
+Stack Memory Leak 
+
+
+public class Stack { 
+private Object[] elements; 
+private int size = 0; 
+private static final int DEFAULT_INITIAL_CAPACITY = 16; 
+
+public Stack() { 
+elements = new Object[DEFAULT_INITIAL_CAPACITY]; 
+} 
+
+public void push(Object e) { 
+ensureCapacity(); 
+elements[size++] = e; 
+
+
+} 
+
+26 
+
+© Steve Beaty and others 
+
+
+Stack Memory Leak 
+
+
+public Object pop() { 
+if (size == 0) 
+throw new EmptyStackException(); 
+return elements[--size]; 
+} 
+
+
+private void ensureCapacity() { 
+if (elements.length == size) 
+elements = Arrays.copyOf(elements, 2 * size + 1); 
+} 
+} 
+
+27 
+
+© Steve Beaty and others 
+
+
+Fixed Memory Leak 
+
+
+public Object pop() { 
+if (size == 0) 
+
+
+throw new EmptyStackException(); 
+Object result = elements[--size]; 
+elements[size] = null; 
+return result; 
+
+} 
+
+
+28 
+
+© Steve Beaty and others 
+
+
+So 
+
+
+• 
+Try very hard to not manage memory 
+• 
+Nulling object references should be very 
+unusual 
+29 
+
+© Steve Beaty and others 
+
+
+Avoid Finalizers 
+
+
+• 
+Unpredictable, often dangerous, generally 
+unnecessary 
+• 
+Unlike C++ destructors 
+– 
+These are called immediately 
+– 
+Java uses try/finally for these types of uses 
+• 
+One never knows when a finalizer is called 
+– 
+Part of garbage collection 
+– 
+Might not be called at all 
+30 
+
+© Steve Beaty and others 
+
+
+Avoid Finalizers 
+
+
+• 
+Don’t e.g. close files as there is a limited 
+number of open files 
+• 
+Finalizers are slow 
+• 
+Finalizers are not chained 
+• 
+If really need functionality, provide explicit 
+termination method 
+31 
+
+© Steve Beaty and others 
+
+
+Summary:
+1. Use builder pattern when you would have a constructor with a large number of parameters. Basically, create a class with all the members of the class you want to build. Then, have many setter methods that set the members. Finally, have a build method that builds the object based on these members.
+2. Static factories: can be called by name, can return subtypes, private types, and types that don't yet exist. Can create new objects or use existing ones. However, if class doesn't have public or protected constructor, it can't be subclassed.
+3. Singletons: basically ensures a single instance of an object. Generally has a private constructor and a getInstance method, but may have other methods.
+4. Utility classes that have only static methods: useful for grouping functions on primitives (like in Math) or arrays (Collections). However, sometimes abused by programmers who are used to thinking procedurally.
+5. Dependency injection: someone or something else fetches a resource and that resourceis then passed into the object's constructor. This makes program more flexible because dependencies can be swapped.
+6. Don't create unnecessary objects.
+7. Memory leaks can happen in java in the sense that, if a programmer isn't careful, they can prevent an object from being garbage collected.
+8. Don't use finalizers: they are inefficient, they aren't guaranteed to run (unlike c++ destructors), and they can cause data corruption if an uncaught exception occurs.
+9. Instead, use try with resource: resources are guaranteed to be released and, when an exception occurs, stack traces are more helpful when debugging.
