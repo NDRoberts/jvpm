@@ -1,0 +1,590 @@
+Effective Java 
+Chapter 3 
+
+
+Methods Common to All Objects 
+
+
+
+
+Obey the General Contract when Overriding 
+
+
+Equals 
+
+• 
+Sometimes, you don’t need to 
+– 
+When all object are unique, such as threads 
+– 
+When you don’t need it, such as with random 
+number generators 
+– 
+Superclass equals works well, such as sets, lists, 
+and maps getting from AbstractList, etc. 
+– 
+Class is private or package private and you know 
+you don’t need it 
+• 
+Consider implementing with an assertion 
+02/07/2019 
+© Steve Beaty and others 2 
+
+When to Implement 
+
+
+• 
+When logical equality (.equals) is different 
+from simple object identity (==) 
+• 
+This is the typical case as classes have state, 
+kept by variables with values 
+• 
+Tests for equivalence, not the same object 
+• 
+When we need the class to be map keys or set 
+elements 
+02/07/2019 
+© Steve Beaty and others 3 
+
+Must Implement an Equivalence Relation 
+
+
+• 
+Must be reflexive: x.equals(x) must return true 
+• 
+Must be symmetric: x.equals(y) must be true if 
+and only if y.equals(x) 
+• 
+Must be transitive: if x.equals(y) is true and 
+y.equals(z) is true, x.equals(z) must be true 
+• 
+Must be consistent: multiple calls to x.equals(y) 
+must always return the same value 
+• 
+For any non-null reference, x.equals(null) must 
+return false 
+02/07/2019 
+© Steve Beaty and others 4 
+
+Non-Symmetric 
+
+
+public final class CaseInsensitiveString { 
+private final String s; 
+
+public CaseInsensitiveString(String s) { 
+if (s == null) 
+throw new NullPointerException(); 
+this.s = s; 
+} 
+
+02/07/2019 
+© Steve Beaty and others 5 
+
+Non-Symmetric 
+
+
+@Override 
+public boolean equals(Object o) { 
+if (o instanceof CaseInsensitiveString) 
+return s.equalsIgnoreCase(((CaseInsensitiveString) o).s); 
+if (o instanceof String) 
+return s.equalsIgnoreCase((String) o); 
+return false; 
+} 
+
+
+public static void main(String[] args) { 
+
+CaseInsensitiveString cis = new CaseInsensitiveString("Polish"); 
+
+String s = "polish"; 
+
+System.out.println(cis.equals(s) + " " + s.equals(cis)); 
+
+} 
+} 
+
+6
+
+02/07/2© Steve Beaty and others 
+
+019 
+
+
+Non-Symmetric 
+
+
+$ java CaseInsensitiveString 
+true false 
+
+02/07/2019 
+© Steve Beaty and others 7 
+
+Correct 
+
+
+@Override public boolean equals(Object o) { 
+return o instanceof CaseInsensitiveString && 
+((CaseInsensitiveString) o).s.equalsIgnoreCase(s); 
+} 
+
+02/07/2019 
+© Steve Beaty and others 8 
+
+Color.java 
+
+public enum Color { 
+
+RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET 
+} 
+
+02/07/2019 
+© Steve Beaty and others 9 
+
+Point.java 
+
+
+public class Point { 
+private final int x; 
+private final int y; 
+public Point(int x, int y) { 
+this.x = x; 
+this.y = y; 
+} 
+} 
+@Override 
+public boolean equals(Object o) { 
+if (!(o instanceof Point)) 
+return false; 
+Point p = (Point) o; 
+return p.x == x && p.y == y; 
+} 
+02/07/2019 
+© Steve Beaty and others 10 
+
+
+Non-Symmetric 
+
+
+public class ColorPoint1 extends Point { 
+private final Color color; 
+
+public ColorPoint1(int x, int y, Color color) { 
+super(x, y); 
+this.color = color; 
+} 
+
+@Override public boolean equals(Object o) { 
+if (!(o instanceof ColorPoint1)) 
+return false; 
+return super.equals(o) && 
+((ColorPoint1) o).color == color; 
+} 
+
+02/07/2019 
+© Steve Beaty and others 11 
+
+Non-Symmetric 
+
+public static void main(String[] args) { 
+Point p = new Point(1, 2); 
+ColorPoint1 cp = new ColorPoint1(1, 2, Color.RED); 
+System.out.println(p.equals(cp) + " " + cp.equals(p)); 
+
+
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 12 
+
+Non-Symmetric 
+
+$ java ColorPoint1 
+true false 
+
+02/07/2019 
+© Steve Beaty and others 13 
+
+Non-Transitive 
+
+
+public class ColorPoint2 extends Point { 
+private final Color color; 
+public ColorPoint2(int x, int y, Color color) { 
+
+super(x, y); 
+
+this.color = color; 
+} 
+@Override public boolean equals(Object o) { 
+
+
+if (!(o instanceof Point)) return false; 
+
+// If o is a normal Point, do a color-blind comparison 
+
+if (!(o instanceof ColorPoint2)) return o.equals(this); 
+
+return super.equals(o) && 
+((ColorPoint2)o).color == color; 
+} 
+
+
+02/07/2019 
+© Steve Beaty and others 14 
+
+Non-Transitive 
+
+
+public static void main(String[] args) { 
+ColorPoint2 p1 = new ColorPoint2(1, 2, Color.RED); 
+Point p2 = new Point(1, 2); 
+ColorPoint2 p3 = new ColorPoint2(1, 2, Color.BLUE); 
+System.out.printf("%s %s %s%n", p1.equals(p2), 
+
+p2.equals(p3), p1.equals(p3)); 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 15 
+
+Result 
+
+
+$ java ColorPoint2 
+true true false 
+
+02/07/2019 
+© Steve Beaty and others 16 
+
+So? 
+
+
+• 
+There is no way to extend an instantiable class 
+and add a value while preserving the equals 
+contract 
+• 
+You can safely add values to a subclass of an 
+abstract class 
+02/07/2019 
+© Steve Beaty and others 17 
+
+Consistency 
+
+
+• 
+Do no write an equals method that depends 
+on unreliable resources 
+• 
+Java’s URL equals relies on IP address 
+comparison 
+– 
+What happens when not on network? 
+– 
+What happens when network addresses change? 
+02/07/2019 
+© Steve Beaty and others 18 
+
+Recipe 
+
+• 
+Check for object == this 
+• 
+Use instanceof to check for correct type 
+• 
+Cast argument to correct type 
+• 
+Test == for all significant fields 
+– 
+Except for Float.compare, Double.compare, and 
+Arrays.equal 
+• 
+Also override hashCode 
+• 
+Use @Override 
+02/07/2019 
+© Steve Beaty and others 19 
+
+Always Override hashCode when you 
+Override equals 
+
+
+• 
+When invoked on the same object, and the object hasn’t 
+changed to affect equals, always return the same integer 
+– 
+Does not have to be the same integer from runtime to runtime 
+• 
+If two objects are equals, both hashCodes must be the 
+same 
+• 
+If they are not equals, it is not required to product 
+distinct hashCodes 
+– 
+If not, hash table performance can be affected 
+– 
+“return 42” is legal, but horrible 
+02/07/2019 
+© Steve Beaty and others 20 
+
+Creating a hashCode 
+
+
+• 
+Set result = 17 
+• 
+For all the fields 
+– 
+Ifboolean, c = f ? 1 : 0 
+– 
+If byte, char, short, or int, c = (int) f 
+– 
+If long, c = (int) (f ^ (f >>> 32)) 
+– 
+If float, c = Float.floatToIntBits(f) 
+– 
+If double, c = (int) (Double.doubleToLongBits(f) ^ 
+(Double.doubleToLongBits(f) >>> 32)) 
+– 
+If reference, call hashCode on object 
+• 
+If null, c= 0 
+– 
+If array, compute hashCode for each element as above 
+21 
+
+02/07/2© Steve Beaty and others 
+
+019 
+
+
+Creating a hashCode 
+
+
+• 
+Update result = 31 * result + c 
+• 
+Exclude any redundant fields 
+– 
+Which you really shouldn’t have anyway 
+• 
+Ignore any fields ignored by equals 
+02/07/2019 
+© Steve Beaty and others 22 
+
+Creating a hashCode 
+
+
+public final class PhoneNumber { 
+private final short areaCode; 
+private final short prefix; 
+private final short lineNumber; 
+private volatile int hashCode; 
+// Lazy initialization 
+@Override public int hashCode() { 
+int result = hashCode; 
+if (result == 0) { 
+result = 17; 
+result = 31 * result + areaCode; 
+result = 31 * result + prefix; 
+result = 31 * result + lineNumber; 
+hashCode = result; 
+} 
+return result; 
+} 
+} 
+02/07/2019 
+© Steve Beaty and others 23 
+
+
+Always Override toString 
+
+
+• 
+Makes class much more pleasant to use 
+• 
+When practical, toString should return all 
+interesting information in object 
+• 
+One has to choose the format returned 
+– 
+Good idea to create a constructor or static factory 
+that takes string representation and creates object 
+• 
+Provide access to values in toString via getters 
+02/07/2019 
+© Steve Beaty and others 24 
+
+Override clone Judiciously 
+
+
+• 
+Creates and returns a copy of an object 
+– 
+x.clone() != x 
+– 
+x.clone().getClass() == x.getclass() 
+– 
+x.clone().equals(x) 
+– 
+Constructors are not called 
+• 
+If you override the clone method in a non-final class, 
+return an object obtained by invoking super.clone 
+• 
+If class implements Cloneable, must have properly 
+functioning public clone method 
+02/07/2019 
+© Steve Beaty and others 25 
+
+Phone Clone 
+
+
+@Override 
+
+public PhoneNumber clone() { 
+try { 
+return (PhoneNumber) super.clone(); 
+} catch (CloneNotSupportedException e) { 
+throw new AssertionError(); // Can't happen 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 26 
+
+Clone Elements Too 
+
+
+• 
+The clone method is effectively another 
+constructor 
+– 
+You must ensure that is does not harm original 
+object and properly establishes invariants 
+• 
+The clone architecture is incompatible with 
+normal use of final fields referring to mutable 
+objects 
+02/07/2019 
+© Steve Beaty and others 27 
+
+Clone Internals 
+
+
+@Override 
+
+public Stack clone() { 
+
+try { 
+Stack result = (Stack) super.clone(); 
+result.elements = elements.clone(); 
+return result; 
+
+} catch (CloneNotSupportedException e) { 
+throw new AssertionError(); 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 28 
+
+More Clones 
+
+
+• 
+No need to provide clone for immutable objects 
+• 
+Instead, can provide copy constructor or factory 
+– 
+public Foo(Foo foo) 
+– 
+public static Foo newInstance(Foo foo) 
+• 
+Interfaces should not extend Cloneable 
+• 
+Classes designed for inheritance should not 
+implement it 
+02/07/2019 
+© Steve Beaty and others 29 
+
+Consider Implementing Comparable 
+
+
+• 
+Similar to equals 
+– 
+But provides ordering information 
+– 
+Is generic 
+– 
+Useful in e.g. Arrays.sort() 
+• 
+Returns comparison between two objects 
+– 
+-1 if first less than second 
+– 
+0 if equal to 
+– 
+1 if greater than 
+02/07/2019 
+© Steve Beaty and others 30 
+
+compareTo 
+
+• 
+x.compareTo(y) == -y.compareTo(x) 
+• 
+x.compareTo(y) > 0 and y.compareTo(z) > 0 
+then x.compareTo(z) > 0 
+• 
+x.compareTo(y) == 0 • 
+x.compareTo(z) == 
+y.compareTo(z) for all z 
+• 
+x.compareTo(y) == 0 • 
+x.equals(y) 
+02/07/2019 
+© Steve Beaty and others 31 
+
+Compare versus Equals 
+
+
+import java.math.BigDecimal; 
+
+public class CompareTo { 
+public static void main (String[] args) { 
+System.out.println(new BigDecimal("1.0").equals(new 
+BigDecimal("1.00"))); 
+System.out.println(new BigDecimal("1.0").compareTo(new 
+BigDecimal("1.00"))); 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 32 
+
+Compare versus Equals 
+
+
+$ java CompareTo 
+false 
+0 
+
+02/07/2019 
+© Steve Beaty and others 33 
+
+Summary
+1. Equals: implements an equivalence relation: reflexive, symetric, transitive, consistent.
+2. Hash code: Used by classes such as hash table to group objects into buckets. If objects are the same according to equals, they should return the same hash code. However, if objects are different, then different hash codes may or may not be returned. The hash code of a given object may differ between instances of the program.
+3. To string: should provide a human-readable representation of the object that gives the user all the information they need to know; this is especially helpful in debugging. Although it is not required, a constructor or static factory should be provided that takes the string representation as produced by to string and returns an instance of the class. If such a constructor is provided, the format of the string representation must be agreed upon with any other developers who will use the class.
+4. Clone: not usually needed, but if implemented, should return an exact copy of the object; that is, an object that is the same in every respect as the object that was cloned. Clone method may need to recursively call itself if there are non-primitive fields.
+5. Compare to: similar to equals, but provides ordering information that can be used for sorting. For any objects a and b:
+a. if a > b, returns positive integer.
+b. If a == b, returns 0.
+C. If a < b, returns a negative integer.
