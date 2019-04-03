@@ -1,0 +1,675 @@
+Effective Java 
+Chapter 4 
+
+
+Classes and Interfaces 
+
+
+
+
+Minimize the Accessibility of Classes and 
+Members 
+
+
+• 
+“The single most important factor that distinguishes a well-
+designed module from a poorly-designed one is the degree to 
+which the module hides its internal data and other 
+implementation details from other modules”. 
+• 
+Encapsulation 
+• 
+Decouples modules allowing them to be developed, tested, 
+optimized, used, understood, and modified in isolation 
+• 
+Make each class or member as inaccessible as possible 
+• 
+If used nowhere else, nest a class within the class that uses it 
+• 
+Don’t make any variable/field/attribute public 
+– 
+At worst, make it package-private 
+02/07/2019 
+© Steve Beaty and others 2 
+
+Minimize the Accessibility of Classes and 
+Members 
+
+
+• 
+Try to avoid protected too 
+– 
+Must always support 
+– 
+Exposes implementation detail to subclasses 
+– 
+Should be rare 
+• 
+If a method overrides a superclass method, it must have the 
+same access level 
+– 
+To not violate the Liskov inversion principle 
+• 
+Implementing an interface requires all methods to be public 
+– 
+Implicit in implementing an interface 
+• 
+Instance field should never be public 
+02/07/2019 
+© Steve Beaty and others 3 
+
+Minimize the Accessibility of Classes and 
+Members 
+
+
+• 
+Instance field should never be public 
+– 
+Limits typing 
+– 
+Limits invariants 
+– 
+Are not thread-safe 
+• 
+Arrays are always mutable 
+– 
+Never have a public static final array field 
+– 
+Or an accessor that returns such a beast 
+– 
+Be careful of IDEs that create accessors automatically 
+02/07/2019 
+© Steve Beaty and others 4 
+
+In Public Classes, use Accessor Methods, not 
+Public Fields 
+
+
+• 
+Book still insists on using lame examples of sets instead of 
+simply making making fields public 
+– 
+With the ostensible argument that we can change internal 
+representation 
+• 
+But we never do 
+• 
+And if we do, we break the preexisting API contract 
+– 
+Less harmful if immutable 
+02/07/2019 
+© Steve Beaty and others 5 
+
+Minimize Mutability 
+
+
+• 
+All information provided at construction 
+• 
+Any changes result in new objects 
+– 
+Which is in general true 
+• 
+Don’t provide methods that modify an object’s state 
+– 
+Mutators 
+• 
+Ensure class cannot be extended 
+– 
+Subclasses can’t change intent 
+• 
+Make all fields final 
+• 
+Make all fields private 
+02/07/2019 
+© Steve Beaty and others 6 
+
+Minimize Mutability 
+
+• 
+Ensure client cannot obtain references to mutable data 
+– 
+Don’t use client-provided reference 
+– 
+Don’t return direct object reference 
+– 
+Make defensive copies 
+• 
+Immutable objects are simple 
+– 
+Always the same behavior 
+– 
+Never global data 
+• 
+Immutable objects are thread-safe 
+– 
+Implicitly parallelizable 
+– 
+No synchronization needed 
+02/07/2019 
+© Steve Beaty and others 7 
+
+Minimize Mutability 
+
+
+• 
+Only possible downside is the need for an object for each 
+value 
+– 
+But: objects are in general cheap 
+– 
+Are you sure it’s inefficient? 
+• 
+“Classes should be immutable unless there is a very good 
+reason to make them mutable” 
+– 
+At the very least, from an external point of view 
+• 
+If cannot be immutable, limit mutability as much as possible 
+– 
+Make every field final unless there is a compelling reason not to 
+02/07/2019 
+© Steve Beaty and others 8 
+
+Favor Composition Over Inheritance 
+
+
+• 
+GO4 
+• 
+Inheritance violates encapsulation 
+– 
+Subclass depends on superclass’s implementation 
+02/07/2019 
+© Steve Beaty and others 9 
+
+Implementation Details 
+
+
+import java.util.Arrays; 
+import java.util.Collection; 
+import java.util.HashSet; 
+
+public class InstrumentedHashSet<E> extends HashSet<E> { 
+private int addCount = 0; 
+
+public InstrumentedHashSet() {} 
+
+public InstrumentedHashSet(int initCap, float loadFactor) { 
+super(initCap, loadFactor); 
+} 
+
+
+@Override 
+
+public boolean add(E e) { 
+
+addCount++; 
+
+return super.add(e); 
+
+} 
+
+10 
+
+02/07/201© Steve Beaty and others 
+
+9 
+
+
+Implementation Details 
+
+
+@Override 
+
+public boolean addAll(Collection<? extends E> c) { 
+addCount += c.size(); 
+return super.addAll(c); 
+} 
+
+
+public int getAddCount() { 
+return addCount; 
+} 
+
+
+public static void main(String[] args) { 
+InstrumentedHashSet<String> s = 
+
+
+new InstrumentedHashSet<String>(); 
+s.addAll(Arrays.asList("Snap", "Crackle", "Pop")); 
+System.out.println(s.getAddCount()); 
+} 
+
+
+} 
+
+11 
+
+02/07/201© Steve Beaty and others 
+
+9 
+
+
+AddAll Calls Add 
+
+
+$ java InstrumentedHashSet 
+6 
+
+02/07/2019 
+© Steve Beaty and others 12 
+
+Compose Instead 
+
+
+• 
+An InstrumentedHashSet has a HashSet instead of extending a 
+HashSet 
+– 
+And extends a ForwardingSet class 
+• 
+Have methods forward to the referenced type 
+• 
+These are wrapper 
+classes 
+– 
+AKA decorator classes 
+02/07/2019 
+© Steve Beaty and others 13 
+
+Has A 
+
+
+public class ForwardingSet<E> implements Set<E> { 
+private final Set<E> s; 
+
+public ForwardingSet(Set<E> s) { this.s = s; } 
+
+
+public void clear() { s.clear(); } 
+public boolean contains(Object o) { return s.contains(o); } 
+public boolean isEmpty() { return s.isEmpty(); } 
+public int size() { return s.size(); } 
+public Iterator<E> iterator() { return s.iterator(); } 
+public boolean add(E e) { return s.add(e); } 
+public boolean remove(Object o) { return s.remove(o); } 
+public boolean addAll(Collection<? extends E> c) { return s.addAll(c); } 
+
+
+02/07/2019 
+© Steve Beaty and others 14 
+
+Inheritance 
+
+
+• 
+Is-A relationship 
+• 
+Is every instance of a subclass really an instance of the 
+superclass? 
+– 
+If not, have a private instance of the referred-to class 
+02/07/2019 
+© Steve Beaty and others 15 
+
+Design and Document for Inheritance 
+
+
+• 
+The only 
+way to test a class designed for inheritance is to write 
+subclasses 
+• 
+Constructors must not call over-ridable methods 
+– 
+Directly or indirectly 
+– 
+A superclass constructor runs before a subclass constructor, so any 
+subclass methods that are overridden will be called before 
+constructor called 
+02/07/2019 
+© Steve Beaty and others 16 
+
+public class Super { 
+public Super() { overrideMe(); } 
+public void overrideMe() {} 
+
+} 
+
+02/07/2019 
+© Steve Beaty and others 17 
+
+$ java Sub 
+null 
+Wed Nov 15 21:54:43 MST 2017 
+
+02/07/2019 
+© Steve Beaty and others 19 
+
+• 
+Final Date field has two different states 
+• 
+Not a null pointer exception because println checks carefully 
+• 
+One has to be very careful when creating classes for sub-
+classing 
+– 
+One way is to make class final 
+– 
+Other is to provide no public or package-private constructors 
+02/07/2019 
+© Steve Beaty and others 20 
+
+Prefer Interfaces to Abstract Classes 
+
+
+• 
+Classes force inheritance 
+– 
+Java is single inheritance 
+• 
+Existing classes can be easily changed to implement interface 
+• 
+Interface are ideal for defining mixins 
+– 
+Loosely, a mixin is an additional type for a class 
+– 
+Useful for polymorphism 
+– 
+Know what methods are available to client, which in general define a 
+type 
+• 
+Can create skeletal implementation for each interface 
+– 
+Generally call AbstractInterface 
+(SkeletonInterface 
+might be better) 
+– 
+AbstractCollection, Map, List, Set 
+02/07/2019 
+© Steve Beaty and others 21 
+
+Prefer Interfaces to Abstract Classes 
+
+
+• 
+Abstract classes do permit multiple implementations 
+– 
+Easier to evolve 
+– 
+If you want to add a method, can add and implement 
+– 
+Everything else still works 
+• 
+Once an interface is released, much more difficult to change 
+– 
+Requires all dependent classes to implement new method 
+02/07/2019 
+© Steve Beaty and others 22 
+
+Use Interfaces Only to Define Types 
+
+• 
+‘nuff said 
+02/07/2019 
+© Steve Beaty and others 23 
+
+Prefer Class Hierarchies to Tagged Classes 
+
+
+• 
+Verbose, error-prone, and inefficient 
+• 
+Imitation of a real class hierarchy 
+02/07/2019 
+© Steve Beaty and others 24 
+
+Prefer Class Hierarchies to Tagged Classes 
+
+class Figure { 
+enum Shape { RECTANGLE, CIRCLE }; 
+final Shape shape; 
+
+// These fields are used only if shape is RECTANGLE 
+
+double length; 
+double width; 
+
+
+// This field is used only if shape is CIRCLE 
+
+double radius; 
+
+02/07/2019 
+© Steve Beaty and others 25 
+
+// Constructor for circle 
+
+Figure(double radius) { 
+shape = Shape.CIRCLE; 
+this.radius = radius; 
+
+
+} 
+
+// Constructor for rectangle 
+
+Figure(double length, double width) { 
+shape = Shape.RECTANGLE; 
+this.length = length; 
+this.width = width; 
+
+} 
+
+02/07/2019 
+© Steve Beaty and others 26 
+
+double area() { 
+switch (shape) { 
+case RECTANGLE: 
+
+return length * width; 
+case CIRCLE: 
+return Math.PI * (radius * radius); 
+default: 
+throw new AssertionError(); 
+} 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 27 
+
+abstract class Figure { 
+
+abstract double area(); 
+} 
+
+class Circle extends Figure { 
+final double radius; 
+
+Circle(double radius) { this.radius = radius; } 
+
+double area() { return Math.PI * (radius * radius); } 
+} 
+
+02/07/2019 
+© Steve Beaty and others 28 
+
+class Rectangle extends Figure { 
+final double length; 
+final double width; 
+
+Rectangle(double length, double width) { 
+this.length = length; 
+this.width = width; 
+
+} 
+
+double area() { 
+return length * width; 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 29 
+
+class Square extends Rectangle { 
+Square(double side) { 
+super(side, side); 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 30 
+
+Use Function Objects to Represent Strategies 
+
+
+• 
+Java didn’t have method references or lambda 
+• 
+Could create objects with known methods and pass those 
+objects, called function objects 
+02/07/2019 
+© Steve Beaty and others 31 
+
+Use Function Objects to Represent Strategies 
+
+
+public interface Comparitor<T> { 
+public int compare(T t1, T t2); 
+} 
+
+class StringLengthComparitor implements Comparitor<String> { 
+public int compare(String s1, String s2) { 
+return s1.length() -s2.length(); 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 32 
+
+Favor Static Member Classes Over Non-static 
+
+
+• 
+A nested class is defined within another class 
+• 
+Only serves the enclosing class 
+• 
+Four kinds 
+– 
+Static 
+– 
+Non-static 
+– 
+Anonymous 
+– 
+Local 
+• 
+Last three are called inner classes 
+02/07/2019 
+© Steve Beaty and others 33 
+
+Favor Static Member Classes Over Non-static 
+
+
+• 
+For example, in a linked list, nodes do not need to refer to 
+head, tail, etc., from list class 
+• 
+No need for node to contain all the data in list, so it can be a 
+static member class 
+• 
+One way to think of this is that the static member class could 
+be a separate class, but the code reads better with it inside 
+02/07/2019 
+© Steve Beaty and others 34 
+
+Anonymous Classes 
+
+
+• 
+Have no names 
+• 
+Not a member of enclosing class 
+• 
+Declared and instantiated at the same place 
+• 
+Permitted wherever expressions are allowed 
+• 
+Cannot have static members 
+• 
+Useful for creating function objects on the fly 
+02/07/2019 
+© Steve Beaty and others 35 
+
+Anonymous Class 
+
+
+Arrays.sort(stringArray, new Comparitor<String> { 
+public int compare(String s1, String s2) { 
+return s1.length() -s2.length(); 
+} 
+}}) 
+
+02/07/2019 
+© Steve Beaty and others 36 
+
+Anonymous Inner Class 
+
+
+Thread t = new Thread() { 
+public void run() { 
+System.out.println("Child Thread"); 
+
+} 
+}; 
+t.start(); 
+
+02/07/2019 
+© Steve Beaty and others 37 
+
+Anonymous Inner Class 
+
+
+Runnable r = new Runnable() { 
+public void run() { 
+System.out.println("Child Thread"); 
+
+} 
+}; 
+Thread t = new Thread(r); 
+t.start(); 
+
+02/07/2019 
+© Steve Beaty and others 38 
+
+Local Class 
+
+
+public void myMethod() { 
+class LocalClass implements Runnable { 
+public void run() { 
+System.out.println("Child Thread"); 
+} 
+} 
+} 
+
+02/07/2019 
+© Steve Beaty and others 39 
+
+Summary
+1. Minimize the accessibility of classes and members: in short, if it doesn't need to be public, don't make it public. Allows testing, developing, and modifying independently of other classes.
+2. use accessors for public classes?
+3. minimize mutibility: make objects immutible if possible, especially in multithreaded programs.
+4. Favor composition over inheritance: composition is more flexible because behavior can change at runtime.
+5. Design and document for inheritance or disallow it entirely: don't call overridable methods in constructor; only way to test is to write subclasses; inflexible because inheritance often depends on implementation details of superclass; inheritance should only be used where there is an is-a relationship; for example, every dog is an animal, so inheritance is appropriate here because it is awkward at best to say that a dog has an animal.
+6. Prefer interfaces over abstract classes: allws polymorphism, but also allows implementations to be added easily without clients having to extend your class; important because java only allows you to extend a single class.
+7. Use interfaces only to define types: don't have interface with only constants.
+8. Prefer class hierarchies to tagged classes: no type code, like in c.
+9. Use function objects to represent strategies: in short, newer versions of java provide function objects, so don't reinvent the wheel by building custom strategy interface.
+10. Favor static member classes over non-static: 3 kinds of inner classes: non-static, static, anonymous, and local.
