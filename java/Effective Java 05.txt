@@ -1,0 +1,233 @@
+Effective Java 05 
+
+
+Generics 
+
+
+
+
+Typing 
+
+• 
+Java’s type system is very complex 
+• 
+It add various mechanisms to add “generics” 
+• 
+Other languages simply have references to 
+objects and duck typing 
+
+Generic Types 
+
+
+• 
+Generic classes and interfaces are known as 
+generic types 
+• 
+Generic types define sets of parameterized 
+types 
+– 
+List<String> 
+– 
+Raw type is List 
+
+import java.util.List; 
+import java.util.Arrays; 
+
+public class UnBounded {
+
+// raw type
+
+public static void printObjectList(List<Object> list) { 
+list.add("foo"); 
+
+/*
+** this causes a run-time error: 
+** java.lang.UnsupportedOperationException
+*/ 
+
+
+for (Object elem : list)
+System.out.println(elem + " "); 
+System.out.println(); 
+} 
+
+
+
+
+Unbounded Wildcard 
+
+
+// unbounded type
+
+public static void printList(List<?> list) { 
+
+/*
+** list.add("foo");
+** causes a compile-time error as one can't
+** add to a List<?>. the printing works.
+*/
+
+
+for (Object elem: list)
+System.out.print(elem + " "); 
+System.out.println(); 
+} 
+
+
+public static void main (String[] args) {
+List<Object> li = Arrays.asList(1, 2, 3); 
+
+printList(li);
+printObjectList(li); 
+}
+} 
+
+
+
+Prefer Lists to Arrays 
+
+• 
+Arrays are covariant 
+– 
+If sub is a subtype of super, sub[] is a subtype of 
+super[] 
+• 
+Generics are invariant 
+– 
+List<t1> is never a subtype of List<t2> 
+
+Covariance 
+
+
+import java.util.List;
+import java.util.ArrayList; 
+
+public class Covariant {
+public static void main(String[] args) {
+
+// fails at runtime:
+// Exception in thread "main"
+// java.lang.ArrayStoreException: java.lang.String
+// at Covariant.main(Covariant.java:4)
+
+
+Object[] objectArray = new Long[1];
+objectArray[0] = "foo"; 
+
+
+// won't compile:
+// ArrayList<Long> cannot be converted to List<Object>
+// List<Object> objectList = new ArrayList<Long>();
+
+
+}
+} 
+
+
+
+Arrays Versus Generics 
+
+
+• 
+Arrays are reified 
+– 
+Their element types are enforced at runtime 
+• 
+Generics are implemented by type erasure 
+– 
+Types enforced at compile time and erase type at 
+run time 
+• 
+Cannot create arrays of generic types, 
+parameterized types, or type parameters 
+
+Favor Generic Methods 
+
+
+// type parameter list: <E>
+
+// return type: Set<E>
+
+public static <E> Set<E> union(Set<E> s1, Set<E> s2) {
+Set<E> result = new HashSet<E>(s1);
+result.addAll(s2);
+return result;
+
+} 
+
+
+
+Bounded Wildcards 
+
+
+• 
+List<String> is not a subtype of List<Object> 
+• 
+However, every object is a subtype of itself 
+• 
+So, can have a parameter that “extends” a 
+generic 
+• 
+And have a parameter that is the supertype 
+• 
+Bit of a hack, really 
+
+// Wildcard type for parameter that serves 
+// as an E producer 
+
+public void pushAll(Iterable<? extends E> src) { 
+for (E e : src) 
+push(e); 
+} 
+
+
+
+// Wildcard type for parameter that serves as 
+// an E consumer 
+
+public void popAll(Collection<? super E> dst) { 
+while (!isEmpty()) 
+dst.add(pop()); 
+} 
+
+
+
+When To Use 
+
+
+• 
+Use bounded wildcards in methods that have 
+producer or consumer parameters 
+– 
+Maybe not a great idea anyway 
+• 
+PECS: Producer/Extends, Consumer/Super 
+• 
+Do not use wildcard return types 
+– 
+Client of class shouldn’t have to know about 
+wildcards 
+
+May Have To Specify 
+
+
+Set<Integer> integers = new HashSet<Integer>(); 
+
+
+Set<Double> doubles = new HashSet<Double>(); 
+
+
+// add some to both, call the super 
+
+Set<Number> numbers = 
+Union.<Number> union(integers, doubles); 
+
+
+
+Summary
+1. Java's type system is complicated, with various mechanisms for generics; other languages, like python, have duck typing. Simply put, in python, if it walks like a duck and quacks like a duck, then it is a duck.
+2. Generic types are those classes and interfaces that define a set of parameterized types: for instance, List<String> (interface), ArrayList<Object> (class). For class or interface of the form Type<t>, the raw type is Type.
+3. Unbounded wildcards: often used as parameters to a method; are of the form Type<?>; adding to such a list causes compiler error, but reading ffrom list is fine.
+4. Arrays are covariant: for types t1 and t2, t2[] is a subtype of t1[] if t2 is a subtype of t1. However, List<t1> is never a subtype of List<t2> regardless of the values of t1 and t2.
+5. For arrays, element types are enforced at runtime; for generics, element types are enforced at compile time. Don't mix arrays and generics.
+6. Bounded wildcards: List<? extends t> or List<? super t>. Pecs (producer extends, consumer super). Don't use wildcards for return types.
