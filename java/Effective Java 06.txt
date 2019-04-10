@@ -1,0 +1,145 @@
+Chapter 06 
+
+
+Enumerations and Annotations 
+
+
+
+
+Use Enumerations Instead of Integer 
+Constants 
+
+
+enum Apple { FUJI, PIPPIN, GRANNY_SMITH } 
+
+public class Enumeration {
+public static final int APPLE_FUJI = 0;
+public static final int APPLE_PIPPIN = 1;
+public static final int APPLE_GRANNY_SMITH = 2; 
+
+public static String toString(int which) { 
+
+switch (which) { 
+case APPLE_FUJI: return "APPLE_FUJI"; 
+case APPLE_PIPPIN: return "APPLE_PIPPIN"; 
+case APPLE_GRANNY_SMITH: return 
+
+"APPLE_GRANNY_SMITH";
+}
+return "Unknown apple type";
+
+
+} 
+
+
+
+Use Enumerations Instead of Integer 
+Constants 
+
+
+public static void main(String[] args) {
+System.out.println(toString(APPLE_FUJI));
+System.out.println(Apple.FUJI);
+
+}
+} 
+
+
+
+Java 
+
+
+• 
+Java’s enumerations are more powerful than 
+other languages’ 
+• 
+Almost classes 
+– 
+Can’t extend, but can implement an interface 
+• 
+Export one instance of each enumeration via a 
+public static final field 
+• 
+Enums are final 
+– 
+Only one instance 
+
+Java 
+
+
+• 
+Provide compile-time type safety 
+• 
+Can’t pass or assign incorrectly 
+
+Can Construct 
+
+
+public enum Planet { 
+MERCURY(3.302e+23, 2.439e6), 
+VENUS(4.869e+24, 6.052e6), 
+EARTH(5.975e+24, 6.378e6), 
+MARS(6.419e+23, 3.393e6), 
+JUPITER(1.899e+27, 7.149e7), 
+SATURN(5.685e+26, 6.027e7), 
+URANUS(8.683e+25, 2.556e7), 
+NEPTUNE(1.024e+26, 2.477e7); 
+
+
+
+private final double mass; // In kilograms 
+private final double radius; // In meters 
+private final double surfaceGravity; // In m / s^2 
+
+private static final double G = 6.67300E-11; 
+
+private Planet(double mass, double radius) { 
+this.mass = mass; 
+this.radius = radius; 
+surfaceGravity = G * mass / (radius * radius); 
+
+} 
+
+
+
+Enumerations 
+
+
+• 
+Don’t count on ordinal values 
+• 
+Use constructor instead 
+• 
+Use EnumSets instead of bit fields 
+
+Annotations 
+
+
+• 
+Prefer Annotations to Naming Patterns 
+– 
+JUnit a major example 
+• 
+Consistently use @Override 
+– 
+Makes sure you are actually overriding 
+– 
+Especially for equals, toString, hashCode 
+
+Use Marker Interfaces to Define Types 
+
+
+• 
+A marker interface is one with no methods 
+• 
+Serializable is an example 
+– 
+Indicates object can be written via 
+ObjectOutputStream 
+
+summary
+1. Use enumerations instead of integer constants: provides better type checking; enumerations can have methods, so large switch or if-else chains are unnecessary.
+2. Don't count on the ordinal value; this depends on the order in which constants are declared; if order changes, algorithm may become incorrect.
+3. Use enum set instead of bit fields.
+4. Prefer annotations to naming patterns; compiler can't enforce naming pattern; prevents silent bugs such as tests not running (this happens in python if your method doesn't start with test_). Be sure to use @override, especially for hashCode, equals, and toString.
+5. Use a marker interface to define a type. A marker interface is one that has no methods.
