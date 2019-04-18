@@ -1,0 +1,414 @@
+Effective Java 07 
+
+
+Methods 
+
+
+
+
+Check Parameters for Validity 
+
+• 
+Most parameters have restrictions on their 
+validity 
+– 
+Positive, non-null, not zero-length, etc. 
+• 
+AKA preconditions 
+• 
+Program defensively 
+• 
+Catch problems as soon as possible 
+• 
+Fail fast 
+
+Check Parameters for Validity 
+
+
+• 
+Method may die 
+– 
+Or worse, work but in an unexpected way 
+• 
+Throw an exception 
+– 
+An IllegalArgumentException a good choice 
+
+Assertions 
+
+
+• 
+Optional in Java 
+– 
+Must enable with –ea 
+– 
+Or in first class (and doesn’t enable them there): 
+static { 
+ClassLoader.getSystemClassLoader(). 
+setDefaultAssertionStatus(true); 
+} 
+
+
+
+
+Check Parameters for Validity 
+
+• 
+Important for maintaining object consistency 
+– 
+Values stored for later use must be good 
+– 
+Checks in constructors important 
+• 
+Check before doing any calculation 
+– 
+Unless calculation does the checks for you 
+
+Make Defensive Copies 
+
+• 
+Assume the worst of your class’s clients 
+– 
+They will modify your invarients 
+
+Immutable? 
+
+
+import java.util.Date; 
+
+public final class Period { 
+private final Date start; 
+private final Date end; 
+
+public Period(Date start, Date end) { 
+if (start.compareTo(end) > 0) 
+throw new IllegalArgumentException(start 
+
++ " after " + end); 
+this.start = start; 
+this.end = end; 
+} 
+// … 
+} 
+
+
+
+Attack 
+
+
+Date start = new Date(); 
+Date end = new Date(); 
+Period p = new Period(start, end); 
+end.setYear(78); 
+System.out.println(p); 
+
+
+
+
+More Immutable 
+
+
+public Period(Date start, Date end) { 
+this.start = new Date(start.getTime()); 
+this.end = new Date(end.getTime()); 
+
+if (this.start.compareTo(this.end) > 0) 
+throw new IllegalArgumentException(start + 
+" after "+ end); 
+} 
+
+
+
+Also a Problem 
+
+
+public Date start() { 
+return start; 
+
+} 
+
+public Date end() { 
+return end; 
+
+} 
+
+
+
+Also an Attack 
+
+
+Date start = new Date(); 
+Date end = new Date(); 
+Period p = new Period(start, end); 
+p.end().setYear(78); 
+
+
+
+
+Also a Fix 
+
+
+public Date start() { 
+
+return new Date(start.getTime()); 
+} 
+
+public Date end() { 
+
+return new Date(end.getTime()); 
+} 
+
+
+
+Arrays 
+
+
+• 
+Non-zero-length arrays are always mutable 
+• 
+Return a copy 
+
+Design Method Signatures Carefully 
+
+
+• 
+Good names 
+• 
+Short parameter lists 
+– 
+If all identical, maybe use varargs 
+
+Short Parameter Lists 
+
+
+public class Sum { 
+static int sum(int ...a) { 
+int some = 0; 
+
+for (int i: a) { 
+some += i; 
+} 
+
+return some; 
+} 
+
+
+
+
+Short Parameter Lists 
+
+public static void main(String ...args) { 
+System.out.println(sum()); 
+System.out.println(sum(1)); 
+System.out.println(sum(1, 2)); 
+System.out.println(sum(1, 2, 3)); 
+} 
+
+} 
+
+
+
+Short Parameter Lists 
+
+
+• 
+Maybe pass a class that encapsulates multiple 
+parameters 
+• 
+Maybe use the builder pattern 
+• 
+Prefer interfaces for parameters 
+• 
+Avoid Booleans, favor enumerations 
+
+Use Overloading Judiciously 
+
+public class CollectionClassifier { 
+public static String classify(Set<?> s) { 
+return "Set"; 
+} 
+
+public static String classify(List<?> lst) { 
+return "List"; 
+} 
+
+
+public static String classify(Collection<?> c) { 
+return "Unknown Collection"; 
+} 
+
+
+
+
+Use Overloading Judiciously 
+
+public static void main(String[] args) { 
+Collection<?>[] collections = { 
+
+
+new HashSet<String>(), 
+new ArrayList<String>(), 
+new HashMap<String, 
+
+
+String>().values() }; 
+
+for (Collection<?> c : collections) 
+System.out.println(classify(c)); 
+} 
+} 
+
+
+
+Use Overloading Judiciously 
+
+
+$ java CollectionClassifier 
+Unknown Collection 
+Unknown Collection 
+Unknown Collection 
+
+
+
+Use Overloading Judiciously 
+
+
+• 
+Overloading happens at compile time 
+• 
+Here, there was an array of Collection<?> 
+• 
+Overloading is static, overriding is dynamic 
+
+A Better Classify 
+
+public static String classify(Collection<?> c) { 
+return c instanceof Set ? "Set" : 
+c instanceof List ? "List" : 
+"Unknown Collection"; 
+
+} 
+
+
+
+Overriding 
+
+class Wine { 
+
+String name() { return "wine"; } 
+} 
+
+class SparklingWine extends Wine { 
+
+@Override 
+
+String name() { return "sparkling wine"; } 
+} 
+
+class Champagne extends SparklingWine { 
+
+@Override 
+
+String name() { return "champagne"; } 
+} 
+
+
+
+Overriding 
+
+public class Overriding { 
+public static void main(String[] args) { 
+Wine[] wines = { 
+new Wine(), 
+new SparklingWine(), 
+new Champagne() }; 
+
+for (Wine wine : wines) 
+System.out.println(wine.name()); 
+} 
+} 
+
+
+
+Overriding 
+
+$ java Overriding 
+wine 
+sparkling wine 
+champagne 
+
+
+
+Overloaded Meaning 
+
+public class SetList { 
+public static void main(String[] args) { 
+Set<Integer> set = new TreeSet<Integer>(); 
+List<Integer> list = new ArrayList<Integer>(); 
+
+for (int i = -3; i < 3; i++) { 
+set.add(i); 
+list.add(i); 
+
+} 
+
+for (int i = 0; i < 3; i++) { 
+set.remove(i); 
+list.remove(i); 
+
+
+} 
+
+
+
+Overloaded Meaning 
+
+System.out.println(set + " " + list); 
+
+} 
+
+} 
+
+
+
+Overloaded Meaning 
+
+$ java SetList 
+[-3, -2, -1] [-2, 0, 2] 
+
+
+
+Overloaded Meaning 
+
+• 
+List as two removes 
+– 
+remove(e) 
+– 
+Remove(int) 
+
+Don’t Return Nulls 
+
+
+• 
+Return empty arrays or empty collections 
+• 
+Collections.emptySet, emptyList, emptyMap 
+
+Write Good JavaDoc Documentation 
+
+
+• 
+For all your visible items 
+
+Summary
+1. Check methods for validity: Basically, don't trust callers to provide good inputs; if input is not what is expected, detect the problem as soon as possible. Throw an exception for invalid inputs; exception can be caught in other methods.
+2. Assertions are optional; easiest way to set is with the -e option.
+3. Make defensive copies: basically, assume that clients will modify your objects, so make copies that you know won't be changed.
+4. Arrays are always mutable, so return a copy using, for example, Arrays.copyOf
+5. Methods should have good names (something you can remember) and short parameter lists (so you can remember the order and type of parameters when calling the method).
+6. Ways to deal with long parameter lists: make new class with appropriate members; builders; maybe hash table or other data structure that has key-value pairs.
+7. Use interface for parameters (E.G. take a List instead of Array List); allows implementation to change without changing method calls.
+8. Use enumeration instead of boolean (parameter may only have two possible values for now, but what if a third one comes later).
+9. Overloading: not the same as overriding; happens at compile time, will find method to call based on reference type rather than run-time type (how could the compiler possibly know what it will be at run time?), so may not do what you expect.
+10. Don't return null; empty set or collection is better because there is no null pointer exception to catch; since java 8, there is an optional class that can either be empty or have a value; when that is used, return optional.empty.
