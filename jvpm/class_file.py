@@ -55,7 +55,7 @@ def get_constant_pool(self):
     pool = {0: []}
     pool[0] = (self.data[8] << 8) + self.data[9]
     for index in range(1, pool[0] - 1):
-        tag = int(get_u1(self))
+        tag = int.from_bytes(get_u1(self), byteorder='big')
         constant = tag_table[tag]
         for aspect in constant:
             aspect

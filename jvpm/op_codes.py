@@ -4,6 +4,7 @@ import numpy  # to get the java-like behavior for arithmetic
 
 from jvpm.jvm_stack import JvmStack, pop_twice, push_twice
 from jvpm.constant_pool_parser import ConstantPoolParser
+from jvpm.constant_pool import ConstantPool
 from jvpm.method_table import MethodTable
 # shuts off the overflow warnings from numpy
 numpy.seterr(over="ignore", under="ignore")
@@ -11,10 +12,10 @@ numpy.seterr(over="ignore", under="ignore")
 class OpCodes():
     """This class interprets opcodes"""
 
-    def __init__(self):
+    def __init__(self, file_name):
         """this is the constructor"""
         self.local_array = [0, 1, 2, 3]
-        with open('jvpm/OpsTest.class', 'rb') as binary_file:
+        with open(file_name, 'rb') as binary_file:
             self.data = bytes(binary_file.read())
         #
         self.table = {0x2a: [aload, 1],
@@ -111,8 +112,8 @@ class OpCodes():
                       0xb1: [ret, 2]}
         self.byte_count = 0
         self.stack = JvmStack()
-        self.constant_pool = []
         self.set_data(self.data)
+        self.constant_pool = ConstantPool(ConstantPoolParser.make_constant_pool(self.data))
 # initialize the method table
         self.nmt = MethodTable()
 

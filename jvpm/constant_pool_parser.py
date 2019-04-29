@@ -76,6 +76,7 @@ taking into account the fact that long and double take up 2 entries"""
             tag = constant[0]
             if tag in [5, 6]:
                 pool.append(None)
+        pool[0] = self.offset
         return pool
 
     def make_constant_pool(self):
