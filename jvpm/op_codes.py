@@ -14,10 +14,10 @@ class OpCodes():
 
     def __init__(self, file_name):
         """this is the constructor"""
-        self.local_array = [0, 1, 2, 3]
         with open(file_name, 'rb') as binary_file:
             self.data = bytes(binary_file.read())
-        #
+        self.stack = JvmStack()
+        self.local_array = [0, 1, 2, 3]
         self.table = {0x2a: [aload, 1],
                       0x59: [dup, 1],
                       0x8d: [f2d, 1],
@@ -109,14 +109,11 @@ class OpCodes():
                       0x65: [lsub, 1],
                       0x83: [lxor, 1],
                       0x00: [not_implemented, 1],
+                      0x01: [also_not_implemented, 1],
                       0xb1: [ret, 2]}
         self.byte_count = 0
-        self.stack = JvmStack()
-        self.set_data(self.data)
-        self.constant_pool = ConstantPool(ConstantPoolParser.make_constant_pool(self.data))
-# initialize the method table
         self.nmt = MethodTable()
-
+        
     def parse_codes(self, op_start):
         """this method searches the binary for only the opcodes we know are in it"""
         self.byte_count = op_start
@@ -143,6 +140,12 @@ def not_implemented(self):
     self.stack.push_op(1)
     self.stack.pop_op()
     return 'not implemented'
+
+def also_not_implemented(self):
+    """This function is dummier than the last"""
+    self.stack.push_op(1)
+    self.stack.pop_op()
+    return 'also not implemented'
 
 def aload(self, index):
     """loads a reference onto stack from local variable array at <index>"""
