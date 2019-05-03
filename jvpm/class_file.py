@@ -1,11 +1,12 @@
+"""This module contains the class and methods that parse a java file."""
 import struct
 
 
 class ClassFile:
-    """This class reads in a Java .class file and parses its values"""
+    """This class reads in a Java .class file and parses its values."""
 
     def __init__(self, name):
-        """This is the ClassFile constructor"""
+        """Construct a ClassFile."""
         with open(name, "rb") as binary_file:
             self.data = binary_file.read()
             self.offset = 0
@@ -47,7 +48,9 @@ class ClassFile:
             )
 
 
+
 def get_constant_pool(self):
+    """Get data for each constant and stores it in a list."""
     tag_table = {
         1: {
             "type": "utf-8",
@@ -159,6 +162,7 @@ def get_constant_pool(self):
 
 
 def get_info(self, count):
+    """Get the structure of a field or method from self.data."""
     info = {0: {"values_count": count}}
     for val in range(1, count):
         info[val] = {}
@@ -177,6 +181,7 @@ def get_info(self, count):
 
 
 def get_attributes(self, count):
+    """Create an empty list appends attributes to it."""
     attributes = []
     attributes.append(0)
     num_attributes = 1
@@ -190,6 +195,7 @@ def get_attributes(self, count):
 
 
 def get_an_attribute(self):
+    """Get a single attribute."""
     attribute = {}
     attribute["name_index"] = int.from_bytes(get_u2(self), byteorder="big")
     attribute["length"] = int.from_bytes(get_u4(self), byteorder="big")
@@ -201,12 +207,14 @@ def get_an_attribute(self):
 
 
 def get_u1(self):
+    """Get a 1 byte value."""
     value = self.data[self.offset]
     self.offset += 1
     return value
 
 
 def get_u2(self):
+    """Get a 2 byte value."""
     # value = (self.data[self.offset] << 8) + self.data[self.offset + 1]
     value = self.data[self.offset : self.offset + 2]
     self.offset += 2
@@ -214,6 +222,7 @@ def get_u2(self):
 
 
 def get_u4(self):
+    """Get a 4 byte value."""
     # value = (self.data[self.offset] << 24) + (self.data[self.offset + 1] << 16) + (self.data[self.offset + 2] << 8) + self.data[self.offset + 3]
     value = self.data[self.offset : self.offset + 4]
     self.offset += 4
@@ -221,6 +230,7 @@ def get_u4(self):
 
 
 def get_u8(self):
+    """Get a 8 byte value."""
     # value = (self.data[self.offset] << 56) + (self.data[self.offset + 1] << 48) + (self.data[self.offset + 2] << 40) + (self.data[self.offset + 3] << 32) + (self.data[self.offset + 4] << 24) + (self.data[self.offset + 5] << 16) + (self.data[self.offset + 6] << 8) + self.data[self.offset + 7]
     value = self.data[self.offset : self.offset + 8]
     self.offset += 8
@@ -228,6 +238,7 @@ def get_u8(self):
 
 
 def get_extended(self, length=0):
+    """Get a value variable length,if not passed retrieve that length from the first 2 bytes.""" 
     if not length:
         length = int.from_bytes(get_u2(self), byteorder="big")
     value = self.data[self.offset : self.offset + length]
