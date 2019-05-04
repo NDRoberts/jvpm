@@ -1,8 +1,9 @@
+"""This module contains the class and methods that parse a java file."""
 import struct
 
 
 class ClassFile:
-    """This class reads in a Java .class file and parses its values"""
+    """This class reads in a Java .class file and parses its values."""
 
     def __init__(self, name):
         """Instantiate a ClassFile and read its constants, fields, methods, & attributes"""
@@ -43,6 +44,7 @@ class ClassFile:
             self.class_attributes = get_attributes(
                 self, self.class_attributes_count
             )
+
 
 
 def get_constant_pool(self):
