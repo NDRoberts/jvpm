@@ -9,16 +9,21 @@ from jvpm.method_table import MethodTable
 # shuts off the overflow warnings from numpy
 numpy.seterr(over="ignore", under="ignore")
 
+
 class OpCodes():
     """This class interprets opcodes"""
 
-    def __init__(self, file_name):
+    def __init__(self, class_stack, class_data, method_table):
         """this is the constructor"""
-        with open(file_name, 'rb') as binary_file:
-            self.data = bytes(binary_file.read())
-        self.stack = JvmStack()
-        self.local_array = [0, 1, 2, 3]
-        self.table = {0x2a: [aload, 1],
+        self.stack = class_stack
+        self.nmt = method_table
+        self.class_data = class_data
+        self.data = class_data.run_code
+        self.table = {0x19: [aload, 2],
+                      0x2a: [aload_0, 1],
+                      0x2b: [aload_1, 1],
+                      0x2c: [aload_2, 1],
+                      0x2d: [aload_3, 1],
                       0x59: [dup, 1],
                       0x8d: [f2d, 1],
                       0x8b: [f2i, 1],
@@ -111,28 +116,25 @@ class OpCodes():
                       0x00: [not_implemented, 1],
                       0x01: [also_not_implemented, 1],
                       0xb1: [ret, 2]}
-        self.byte_count = 0
-        self.nmt = MethodTable()
         
-    def parse_codes(self, op_start):
-        """this method searches the binary for only the opcodes we know are in it"""
-        self.byte_count = op_start
+
+    def parse_codes(self):
+        """Call the Interpret function on each opcode in the provided data."""
+        self.byte_count = 0
         while self.byte_count < len(self.data):
             if self.data[self.byte_count] in self.table.keys():
                 self.interpret(self.data[self.byte_count])
             else:
                 self.interpret(0)
 
-    def interpret(self, value):
-        """this is the method used to interpret a given opcode"""
-        self.byte_count += self.table[value][1]
-        return self.table[value][0](self)
 
-    def set_data(self, data):
-        """this method exists so that I can change the opcode data for testing"""
-        self.data = data
-# update the constant pool
-        self.constant_pool = ConstantPoolParser(data).make_constant_pool()
+    def interpret(self, value):
+        """Interpret a given opcode."""
+        args = []
+        if self.table[value][1] > 1:
+            args = self.data[self.byte_count + 1 : self.byte_count + self.table[value][1]]
+        self.byte_count += self.table[value][1]
+        return self.table[value][0](self, *args)
 
 
 def not_implemented(self):
@@ -142,36 +144,52 @@ def not_implemented(self):
     return 'not implemented'
 
 def also_not_implemented(self):
-    """This function is dummier than the last"""
+    """This function is dummier than the last."""
     self.stack.push_op(1)
     self.stack.pop_op()
     return 'also not implemented'
 
 def aload(self, index):
     """loads a reference onto stack from local variable array at <index>"""
-    self.stack.push_op(numpy.int32(self.local_array[index]))
+    self.stack.push_op(numpy.int32(self.stack.local_array[index]))
+
+def aload_0(self):
+    """Loads a reference onto the stack from local array index 0."""
+    self.stack.push_op(self.stack.local_array[0])
+
+def aload_1(self):
+    """Loads a reference onto the stack from local array index 1."""
+    self.stack.push_op(self.stack.local_array[1])
+
+def aload_2(self):
+    """Loads a reference onto the stack from local array index 2."""
+    self.stack.push_op(self.stack.local_array[2])
+
+def aload_3(self):
+    """Loads a reference onto the stack from local array index 3."""
+    self.stack.push_op(self.stack.local_array[3])
 
 def iload(self, index):
     """loads an int from local data array at <index> onto stack"""
-    self.stack.push_op(self.local_array[index])
+    self.stack.push_op(self.stack.local_array[index])
 
 def iload_0(self):
     """loads an int from local data array at index 0 onto stack"""
-    self.stack.push_op(self.local_array[0])
+    self.stack.push_op(self.stack.local_array[0])
 
 def iload_1(self):
     """loads an int from local data array at index 1 onto stack"""
-    self.stack.push_op(self.local_array[1])
+    self.stack.push_op(self.stack.local_array[1])
 
 def iload_2(self):
     """loads an int from local data array at index 2 onto stack"""
-    self.stack.push_op(self.local_array[2])
+    self.stack.push_op(self.stack.local_array[2])
 
 def iload_3(self):
     """loads an int from local data array at index 3 onto stack"""
-    self.stack.push_op(self.local_array[3])
+    self.stack.push_op(self.stack.local_array[3])
 
-def ret(self):
+def ret(self, index):
     """this function will eventually implement the ret opcode"""
     self.stack.push_op(1)
     self.stack.pop_op()
@@ -205,69 +223,69 @@ def iconst_5(self):
     self.stack.push_op(5)
 def istore(self, index):
     """loads an int from stack into local array at <index>"""
-    self.local_array[index] = self.stack.pop_op()
+    self.stack.local_array[index] = self.stack.pop_op()
 
 def istore_0(self):
     """this function implements the istore_0 opcode"""
-    self.local_array[0] = self.stack.pop_op()
+    self.stack.local_array[0] = self.stack.pop_op()
 
 def istore_1(self):
     """this function implements the istore_1 opcode"""
-    self.local_array[1] = self.stack.pop_op()
+    self.stack.local_array[1] = self.stack.pop_op()
     self.stack.push_op(1)
     self.stack.pop_op()
 
 def istore_2(self):
     """this function implements the istore_2 opcode"""
-    self.local_array[2] = self.stack.pop_op()
+    self.stack.local_array[2] = self.stack.pop_op()
 
 def istore_3(self):
     """this function implements the istore_3 opcode"""
-    self.local_array[3] = self.stack.pop_op()
+    self.stack.local_array[3] = self.stack.pop_op()
 
 def lstore(self, index):
     """implements the lstore opcode for 64 bit longs"""
-    self.local_array[index] = self.stack.pop_op(pop_twice)
+    self.stack.local_array[index] = self.stack.pop_op(pop_twice)
 
 def fstore(self, index):
     """implements the fstore opcode for 32 bit floats"""
-    self.local_array[index] = numpy.int64(self.stack.pop_op(pop_twice))
+    self.stack.local_array[index] = numpy.int64(self.stack.pop_op(pop_twice))
 
 def lstore_0(self):
     """implements lstore_0 opcode, loads 64 bit long 0 into local array"""
-    self.local_array[0] = self.stack.pop_op(pop_twice)
+    self.stack.local_array[0] = self.stack.pop_op(pop_twice)
 
 def lstore_1(self):
     """implements lstore_1 opcode, loads 64 bit long 1 into local array"""
-    self.local_array[1] = self.stack.pop_op(pop_twice)
+    self.stack.local_array[1] = self.stack.pop_op(pop_twice)
 
 def lstore_2(self):
     """implements lstore_2 opcode, loads 64 bit long 2 into local array"""
-    self.local_array[2] = self.stack.pop_op(pop_twice)
+    self.stack.local_array[2] = self.stack.pop_op(pop_twice)
 
 def lstore_3(self):
     """implements lstore_3 opcode, loads 64 bit long 3 into local array"""
-    self.local_array[3] = self.stack.pop_op(pop_twice)
+    self.stack.local_array[3] = self.stack.pop_op(pop_twice)
 
 def fstore_0(self):
     """implements the fstore_0 opcode for 32 bit floats"""
-    self.local_array[0] = numpy.float32(self.stack.pop_op(pop_twice))
+    self.stack.local_array[0] = numpy.float32(self.stack.pop_op(pop_twice))
 
 def fstore_1(self):
     """implements the fstore_1 opcode for 32 bit floats"""
-    self.local_array[1] = numpy.float32(self.stack.pop_op(pop_twice))
+    self.stack.local_array[1] = numpy.float32(self.stack.pop_op(pop_twice))
 
 def fstore_2(self):
     """implements the fstore_2 opcode for 32 bit floats"""
-    self.local_array[2] = numpy.float32(self.stack.pop_op(pop_twice))
+    self.stack.local_array[2] = numpy.float32(self.stack.pop_op(pop_twice))
 
 def fstore_3(self):
     """implements the fstore_3 opcode for 32 bit floats"""
-    self.local_array[3] = numpy.float32(self.stack.pop_op(pop_twice))
+    self.stack.local_array[3] = numpy.float32(self.stack.pop_op(pop_twice))
 
 def iinc(self, index, constant):
     """implements iinc opcode, increments local variable at <index> by constant"""
-    self.local_array[index] += constant
+    self.stack.local_array[index] += constant
 
 def iadd(self):
     """implements the iadd opcode"""
@@ -396,7 +414,7 @@ def ldc(self):
     index = b"\x00" + self.data[self.byte_count - 1:self.byte_count]
     self.constant_pool.load_constant(index, self.stack)
 
-def invokevirtual(self):
+def old_invokevirtual(self):
     """implements invokevirtual"""
 # look up the method to be invoked.
     methodref = self.constant_pool.lookup_constant(self.data[self.byte_count - 2:self.byte_count])
@@ -419,12 +437,27 @@ def invokevirtual(self):
     official_name = classname + "." + methodname + methodtype
     self.nmt.call(self, official_name)
 
-def invokespecial(self):
+
+def invokevirtual(self, index_byte_1, index_byte_2):
+    index = (index_byte_1 << 8) + index_byte_2
+    class_index = self.class_data.constant_pool[index]['class_index']
+    name_and_type_index = self.class_data.constant_pool[index]['name_and_type_index']
+    class_name_index = self.class_data.constant_pool[class_index]['name_index']
+    method_name_index = self.class_data.constant_pool[name_and_type_index]['name_index']
+    method_descriptor_index = self.class_data.constant_pool[name_and_type_index]['descriptor_index']
+    class_name = self.class_data.constant_pool[class_name_index]
+    method_name = self.class_data.constant_pool[method_name_index]
+    method_descriptor = self.class_data.constant_pool[method_descriptor_index]
+    invoked_method = {'class_name': class_name, 'method_name': method_name, 'method_descriptor': method_descriptor}
+    self.nmt.call(invoked_method)
+
+
+def invokespecial(self, index_byte_1, index_byte_2):
     """This function implements the invokespecial opcode"""
     # byte_1 = self.data[self.byte_count + 1]
     # byte_2 = self.data[self.byte_count + 2]
     # return byte_1 + byte_2
-    invokevirtual(self)
+    invokevirtual(self, index_byte_1, index_byte_2)
 
 def new(self):
     """Find the constant representing the class to be instantiated, then STACK IT"""
@@ -442,23 +475,23 @@ def dup(self):
 
 def lload(self, index):
     """loads a long from local long data array at <index> onto stack"""
-    self.stack.push_op(numpy.int64(self.local_array[index]), push_twice)
+    self.stack.push_op(numpy.int64(self.stack.local_array[index]), push_twice)
 
 def lload_0(self):
     """loads a long from local long data array at index 0 onto stack"""
-    self.stack.push_op(numpy.int64(self.local_array[0]), push_twice)
+    self.stack.push_op(numpy.int64(self.stack.local_array[0]), push_twice)
 
 def lload_1(self):
     """loads a long from local long data array at index 1 onto stack"""
-    self.stack.push_op(numpy.int64(self.local_array[1]), push_twice)
+    self.stack.push_op(numpy.int64(self.stack.local_array[1]), push_twice)
 
 def lload_2(self):
     """loads a long from local long data array at index 2 onto stack"""
-    self.stack.push_op(numpy.int64(self.local_array[2]), push_twice)
+    self.stack.push_op(numpy.int64(self.stack.local_array[2]), push_twice)
 
 def lload_3(self):
     """loads a long from local long data array at index 3 onto stack"""
-    self.stack.push_op(numpy.int64(self.local_array[3]), push_twice)
+    self.stack.push_op(numpy.int64(self.stack.local_array[3]), push_twice)
 
 def lshl(self):
     """pop a long and an int and shift the long bitwise left by the low 6 bits
@@ -548,23 +581,23 @@ def fconst_2(self):
 
 def fload(self, index):
     """loads a float from local float data array at <index> onto stack"""
-    self.stack.push_op(numpy.float32(self.local_array[index]))
+    self.stack.push_op(numpy.float32(self.stack.local_array[index]))
 
 def fload_0(self):
     """loads a float from local float data array at index 0 onto stack"""
-    self.stack.push_op(numpy.float32(self.local_array[0]))
+    self.stack.push_op(numpy.float32(self.stack.local_array[0]))
 
 def fload_1(self):
     """loads a float from local float data array at index 1 onto stack"""
-    self.stack.push_op(numpy.float32(self.local_array[1]))
+    self.stack.push_op(numpy.float32(self.stack.local_array[1]))
 
 def fload_2(self):
     """loads a float from local float data array at index 2 onto stack"""
-    self.stack.push_op(numpy.float32(self.local_array[2]))
+    self.stack.push_op(numpy.float32(self.stack.local_array[2]))
 
 def fload_3(self):
     """loads a float from local float data array at index 3 onto stack"""
-    self.stack.push_op(numpy.float32(self.local_array[3]))
+    self.stack.push_op(numpy.float32(self.stack.local_array[3]))
 
 def l2d(self):
     """convert long to double"""

@@ -3,18 +3,24 @@
 
 from jvpm.jvm_stack import JvmStack
 from jvpm.class_file import ClassFile
-from jvpm.op_codes import OpCodes
 from jvpm.method_table import MethodTable
+from jvpm.op_codes import OpCodes
+#import jvpm.op_codes as ops
 import sys
 
+class Jvpm:
 
-stack = JvmStack()
-class_data = ClassFile('AddTwo.class') #(sys.argv[1])
-nmt = MethodTable()
-print(class_data.run_code)
-opperclops = OpCodes('AddTwo.class')
-opperclops.parse_codes(class_data.fields_begin)
+    def __init__(self):
+        self.stack = JvmStack()
+        self.class_data = ClassFile('AddTwo.class') #(sys.argv[1])
+        self.nmt = MethodTable(self.stack)
+        self.ops = OpCodes(self.stack, self.class_data, self.nmt)
 
-#for op in class_data.run_code:
-#    print(op)
-#    opperdops.interpret(op)
+        self.ops.parse_codes()
+
+        for remainder in self.stack.stack:
+            print(remainder)
+
+
+if __name__ == "__main__":
+    Jvpm()

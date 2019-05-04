@@ -5,18 +5,16 @@ class ClassFile:
     """This class reads in a Java .class file and parses its values"""
 
     def __init__(self, name):
-        """This is the ClassFile constructor"""
+        """Instantiate a ClassFile and read its constants, fields, methods, & attributes"""
         with open(name, "rb") as binary_file:
-            self.data = binary_file.read()
+            self.data = bytes(binary_file.read())
             self.offset = 0
-            self.I_AM_CODE = 0
+            self._I_AM_CODE = 0
             self.run_code = bytearray(0x00)
             self.magic = get_u4(self)
             self.minor = get_u2(self)
             self.major = get_u2(self)
             self.pool_count = int.from_bytes(get_u2(self), byteorder="big")
-            print(self.pool_count)
-            # self.offset = 10
 
             self.cp_begin = self.offset
             self.constant_pool = get_constant_pool(self)
@@ -48,6 +46,7 @@ class ClassFile:
 
 
 def get_constant_pool(self):
+    """Collect the Constant Pool from a .class file as a list, rendering each constant in a Python-readable format"""
     tag_table = {
         1: {
             "type": "utf-8",
@@ -150,15 +149,14 @@ def get_constant_pool(self):
                 constant[aspect] = constant[aspect]()
         pool[index] = constant
         if tag == 1 and constant["value"] == "Code":
-            self.I_AM_CODE = index
+            self._I_AM_CODE = index
         if tag in [5, 6]:
             index += 1
-        if tag == 1:
-            print(constant["value"])
     return pool
 
 
 def get_info(self, count):
+    """Get the contents of a Field or Method section"""
     info = {0: {"values_count": count}}
     for val in range(1, count):
         info[val] = {}
@@ -177,6 +175,7 @@ def get_info(self, count):
 
 
 def get_attributes(self, count):
+    """Get the attributes of a Field, Method, or Class"""
     attributes = []
     attributes.append(0)
     num_attributes = 1
@@ -190,44 +189,49 @@ def get_attributes(self, count):
 
 
 def get_an_attribute(self):
+    """Return the index, length, and info of a single attribute as a dictionary"""
     attribute = {}
     attribute["name_index"] = int.from_bytes(get_u2(self), byteorder="big")
     attribute["length"] = int.from_bytes(get_u4(self), byteorder="big")
     attribute["info"] = get_extended(self, length=attribute["length"])
     # # WANGLE OUT CODE ATTRIBUTES
-    if attribute["name_index"] == self.I_AM_CODE:
+    if attribute["name_index"] == self._I_AM_CODE:
         self.run_code.extend(attribute["info"])
     return attribute
 
 
 def get_u1(self):
+    """Fetch a single-byte value from the class data"""
     value = self.data[self.offset]
     self.offset += 1
     return value
 
 
 def get_u2(self):
-    # value = (self.data[self.offset] << 8) + self.data[self.offset + 1]
+    """Fetch a two-byte value from the class data"""
     value = self.data[self.offset : self.offset + 2]
     self.offset += 2
     return value
 
 
 def get_u4(self):
-    # value = (self.data[self.offset] << 24) + (self.data[self.offset + 1] << 16) + (self.data[self.offset + 2] << 8) + self.data[self.offset + 3]
+    """Fetch a four-byte value from the class data"""
     value = self.data[self.offset : self.offset + 4]
     self.offset += 4
     return value
 
 
 def get_u8(self):
-    # value = (self.data[self.offset] << 56) + (self.data[self.offset + 1] << 48) + (self.data[self.offset + 2] << 40) + (self.data[self.offset + 3] << 32) + (self.data[self.offset + 4] << 24) + (self.data[self.offset + 5] << 16) + (self.data[self.offset + 6] << 8) + self.data[self.offset + 7]
+    """Fetch an eight-byte value from the class data"""
     value = self.data[self.offset : self.offset + 8]
     self.offset += 8
     return value
 
 
 def get_extended(self, length=0):
+    """Fetch a variable-length value from the class data"""
+    """If no length value is supplied, assume the first two bytes
+    of the target value represent its length."""
     if not length:
         length = int.from_bytes(get_u2(self), byteorder="big")
     value = self.data[self.offset : self.offset + length]
