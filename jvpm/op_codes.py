@@ -3,9 +3,6 @@
 import numpy  # to get the java-like behavior for arithmetic
 
 from jvpm.jvm_stack import JvmStack, pop_twice, push_twice
-from jvpm.constant_pool_parser import ConstantPoolParser
-from jvpm.constant_pool import ConstantPool
-from jvpm.method_table import MethodTable
 # shuts off the overflow warnings from numpy
 numpy.seterr(over="ignore", under="ignore")
 

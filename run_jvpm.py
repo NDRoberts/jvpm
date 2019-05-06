@@ -12,14 +12,14 @@ class Jvpm:
 
     def __init__(self):
         self.stack = JvmStack()
-        self.class_data = ClassFile('AddTwo.class') #(sys.argv[1])
+        self.class_data = ClassFile('./jvpm/Java/HelloWorld.class') #(sys.argv[1:])
         self.nmt = MethodTable(self.stack)
         self.ops = OpCodes(self.stack, self.class_data, self.nmt)
 
         self.ops.parse_codes()
 
-        for remainder in self.stack.stack:
-            print(remainder)
+        #for remainder in self.stack.stack:
+        #    print(remainder)
 
 
 if __name__ == "__main__":

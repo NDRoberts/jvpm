@@ -13,8 +13,8 @@ class ClassFile:
             self._I_AM_CODE = 0
             self.run_code = bytearray(0x00)
             self.magic = get_u4(self)
-            self.minor = get_u2(self)
-            self.major = get_u2(self)
+            self.minor = int.from_bytes(get_u2(self), byteorder='big')
+            self.major = int.from_bytes(get_u2(self), byteorder='big')
             self.pool_count = int.from_bytes(get_u2(self), byteorder="big")
 
             self.cp_begin = self.offset
