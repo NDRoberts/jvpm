@@ -224,12 +224,6 @@ class TestOpCodes(unittest.TestCase):
         iload_3(self.test)
         self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[3])
 
-    # def test_mph1(self):
-    #     """tests mph1 method"""
-    #     self.assertEqual(1 + 1, 2)
-    #     with self.assertRaises(KeyError):
-    #         OpCodes().interpret(1)
-
     # def test_new(self):
     #     """tests new method"""        
     #     new(test)
