@@ -320,225 +320,212 @@ class TestOpCodes(unittest.TestCase):
         ixor(self.test)
         self.assertEqual(self.test.stack.peek(), 126)
 
-    # def test_ishl(self):
-    #     """ Test the ishl (Integer Shift Left) opcode """
-    #     ops = OpCodes()
-    #     ops.stack.push_op(0)
-    #     ops.stack.push_op(0)
-    #     ishl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
+    def test_ishl(self):
+        """ Test the ishl (Integer Shift Left) opcode """
+        self.test.stack.push_op(0)
+        self.test.stack.push_op(0)
+        ishl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
 
-    #     ops.stack.push_op(1)
-    #     ops.stack.push_op(1)
-    #     ishl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 2)
+        self.test.stack.push_op(1)
+        self.test.stack.push_op(1)
+        ishl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 2)
 
-    #     ops.stack.push_op(1)
-    #     ops.stack.push_op(3)
-    #     ishl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 8)
+        self.test.stack.push_op(1)
+        self.test.stack.push_op(3)
+        ishl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 8)
 
-    #     ops.stack.push_op(1)
-    #     ops.stack.push_op(8)
-    #     ishl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 256)
+        self.test.stack.push_op(1)
+        self.test.stack.push_op(8)
+        ishl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 256)
 
-    #     ops.stack.push_op(8)
-    #     ops.stack.push_op(4)
-    #     ishl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 128)
+        self.test.stack.push_op(8)
+        self.test.stack.push_op(4)
+        ishl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 128)
 
-    #     ops.stack.push_op(16)
-    #     ops.stack.push_op(2)
-    #     ishl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 64)
+        self.test.stack.push_op(16)
+        self.test.stack.push_op(2)
+        ishl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 64)
 
-    # def test_ishr(self):
-    #     """ Test the ishr (Integer Arithmetic Shift Right) opcode """
-    #     ops = OpCodes()
-    #     ops.stack.push_op(0)
-    #     ops.stack.push_op(0)
-    #     ishr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
+    def test_ishr(self):
+        """ Test the ishr (Integer Arithmetic Shift Right) opcode """
+        self.test.stack.push_op(0)
+        self.test.stack.push_op(0)
+        ishr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
 
-    #     ops.stack.push_op(8)
-    #     ops.stack.push_op(3)
-    #     ishr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 1)
+        self.test.stack.push_op(8)
+        self.test.stack.push_op(3)
+        ishr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 1)
 
-    #     ops.stack.push_op(256)
-    #     ops.stack.push_op(6)
-    #     ishr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 4)
-    #     ops.stack.push_op(16)
-    #     ops.stack.push_op(3)
-    #     ishr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 2)
+        self.test.stack.push_op(256)
+        self.test.stack.push_op(6)
+        ishr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 4)
+        self.test.stack.push_op(16)
+        self.test.stack.push_op(3)
+        ishr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 2)
 
-    #     ops.stack.push_op(32)
-    #     ops.stack.push_op(2)
-    #     ishr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 8)
+        self.test.stack.push_op(32)
+        self.test.stack.push_op(2)
+        ishr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 8)
 
-    #     ops.stack.push_op(16)
-    #     ops.stack.push_op(2)
-    #     ishr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 4)
+        self.test.stack.push_op(16)
+        self.test.stack.push_op(2)
+        ishr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 4)
 
-    # def test_iushr(self):
-    #     """ Test the iushr (Logical Shift Right) opcode """
-    #     ops = OpCodes()
-    #     # iushr(255 >>> 2) should produce (63)
-    #     ops.stack.push_op(255)
-    #     ops.stack.push_op(2)
-    #     iushr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 63)
-    #     # iushr(-1 >> 4) should produce (268,435,455)
-    #     ops.stack.push_op(-1)
-    #     ops.stack.push_op(4)
-    #     iushr(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 268435455)
+    def test_iushr(self):
+        """ Test the iushr (Logical Shift Right) opcode """
+        # iushr(255 >>> 2) should produce (63)
+        self.test.stack.push_op(255)
+        self.test.stack.push_op(2)
+        iushr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 63)
+        # iushr(-1 >> 4) should produce (268,435,455)
+        self.test.stack.push_op(-1)
+        self.test.stack.push_op(4)
+        iushr(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 268435455)
 
-    # def test_i2b(self):
-    #     """Test conversion of integer to byte dawg"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42)
-    #     i2b(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int8)
+    def test_i2b(self):
+        """Test conversion of integer to byte dawg"""
+        self.test.stack.push_op(42)
+        i2b(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int8)
 
-    # def test_i2c(self):
-    #     """Test conversion of integer to byte"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(33)
-    #     i2c(ops)
-    #     assert isinstance(ops.stack.peek(), str)
+    def test_i2c(self):
+        """Test conversion of integer to byte"""
+        self.test.stack.push_op(33)
+        i2c(self.test)
+        assert isinstance(self.test.stack.peek(), str)
 
-    # def test_i2d(self):
-    #     """Test conversion of integer to double"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42)
-    #     i2d(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.float64)
+    def test_i2d(self):
+        """Test conversion of integer to double"""
+        self.test.stack.push_op(42)
+        i2d(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.float64)
 
-    # def test_i2f(self):
-    #     """Test conversion of integer to float"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42)
-    #     i2f(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.float32)
+    def test_i2f(self):
+        """Test conversion of integer to float"""
+        self.test.stack.push_op(42)
+        i2f(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.float32)
 
-    # def test_i2l(self):
-    #     """Test conversion of integer to long"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42)
-    #     i2l(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
+    def test_i2l(self):
+        """Test conversion of integer to long"""
+        self.test.stack.push_op(42)
+        i2l(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
 
-    # def test_i2s(self):
-    #     """Test conversion of integer to short"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42)
-    #     i2s(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int16)
+    def test_i2s(self):
+        """Test conversion of integer to short"""
+        self.test.stack.push_op(42)
+        i2s(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int16)
 
-    # def test_dup(self):
-    #     """Test dup"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(15)
-    #     dup(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 15)
-    #     self.assertEqual(ops.stack.pop_op(), 15)
+    def test_dup(self):
+        """Test dup"""
+        self.test.stack.push_op(15)
+        dup(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 15)
+        self.assertEqual(self.test.stack.pop_op(), 15)
 
-    #     ops.stack.push_op(0)
-    #     dup(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
+        self.test.stack.push_op(0)
+        dup(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
+        self.assertEqual(self.test.stack.pop_op(), 0)
 
-    #     ops.stack.push_op('foo')
-    #     dup(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 'foo')
-    #     self.assertEqual(ops.stack.pop_op(), 'foo')
+        self.test.stack.push_op('foo')
+        dup(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 'foo')
+        self.assertEqual(self.test.stack.pop_op(), 'foo')
 
-    # def test_lload(self):
-    #     """tests lload method"""
+    def test_lload(self):
+        """tests lload method"""
         
-    #     #tests every load index from 0 to length
-    #     length = len(test.local_array)
-    #     for i in range(0, length):
-    #         lload(test, i)
-    #         self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[i])
+        #tests every load index from 0 to length
+        length = len(self.test.stack.local_array)
+        for i in range(0, length):
+            lload(self.test, i)
+            self.assertEqual(self.test.stack.pop_op(pop_twice), self.test.stack.local_array[i])
 
-    # def test_lload_0(self):
-    #     """tests iload_0 opcode"""
+    def test_lload_0(self):
+        """tests iload_0 opcode"""
         
-    #     lload_0(test)
-    #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[0])
+        lload_0(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), self.test.stack.local_array[0])
 
-    # def test_lload_1(self):
-    #     """tests iload_1 opcode"""
+    def test_lload_1(self):
+        """tests iload_1 opcode"""
         
-    #     lload_1(test)
-    #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[1])
+        lload_1(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), self.test.stack.local_array[1])
 
-    # def test_lload_2(self):
-    #     """tests iload_2 opcode"""
+    def test_lload_2(self):
+        """tests iload_2 opcode"""
         
-    #     lload_2(test)
-    #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[2])
+        lload_2(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), self.test.stack.local_array[2])
 
-    # def test_lload_3(self):
-    #     """tests iload_3 opcode"""
+    def test_lload_3(self):
+        """tests iload_3 opcode"""
         
-    #     lload_3(test)
-    #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[3])
+        lload_3(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), self.test.stack.local_array[3])
 
-    # def test_lshl(self):
-    #     """Test lshl (long shift left)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(2, push_twice)
-    #     ops.stack.push_op(2)
-    #     lshl(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(8))
+    def test_lshl(self):
+        """Test lshl (long shift left)"""
+        self.test.stack.push_op(2, push_twice)
+        self.test.stack.push_op(2)
+        lshl(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(8))
 
-    #     ops.stack.push_op(2, push_twice)
-    #     ops.stack.push_op(66)
-    #     lshl(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(8))
+        self.test.stack.push_op(2, push_twice)
+        self.test.stack.push_op(66)
+        lshl(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(8))
 
-    # def test_lshr(self):
-    #     """Test lshr (long shift right)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42, push_twice)
-    #     ops.stack.push_op(3)
-    #     lshr(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(5))
+    def test_lshr(self):
+        """Test lshr (long shift right)"""
+        self.test.stack.push_op(42, push_twice)
+        self.test.stack.push_op(3)
+        lshr(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(5))
 
-    #     ops.stack.push_op(2, push_twice)
-    #     ops.stack.push_op(66)
-    #     lshr(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(0))
+        self.test.stack.push_op(2, push_twice)
+        self.test.stack.push_op(66)
+        lshr(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(0))
 
-    #     ops.stack.push_op(-15, push_twice)
-    #     ops.stack.push_op(2)
+        self.test.stack.push_op(-15, push_twice)
+        self.test.stack.push_op(2)
 
-    #     lshr(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(-4))
+        lshr(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(-4))
 
-    # def test_land(self):
-    #     """Test land (logical bitwise long AND)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(42)
-    #     i2l(ops)
-    #     ops.stack.push_op(6)
-    #     i2l(ops)
-    #     land(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(2))
+    def test_land(self):
+        """Test land (logical bitwise long AND)"""
+        self.test.stack.push_op(42)
+        i2l(self.test)
+        self.test.stack.push_op(6)
+        i2l(self.test)
+        land(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(2))
 
     # def test_lcmp(self):
     #     """Test lcmp (compare 2 longs)"""
