@@ -11,7 +11,7 @@ numpy.warnings.filterwarnings("ignore")
 
 
 class TestOpCodes(unittest.TestCase):
-    test = Jvpm('jvpm/Java/test.class')
+    test = Jvpm('jvpm/Java/Test.class')
 
     """this class tests the op_codes class"""
     # @patch('builtins.print')
