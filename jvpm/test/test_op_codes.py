@@ -768,126 +768,116 @@ class TestOpCodes(unittest.TestCase):
         assert isinstance(self.test.stack.peek(), numpy.int64)
         self.assertEqual(numpy.int64(1), self.test.stack.pop_op(pop_twice))
 
-    # def test_fadd(self):
-    #     """tests the fadd opcodes"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.float32(0.0))
-    #     op_code.stack.push_op(numpy.float32(0.0))
-    #     fadd(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 0.0)
-    #     op_code.stack.push_op(numpy.float32(2.0))
-    #     op_code.stack.push_op(numpy.float32(1.0))
-    #     fadd(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 3.0)
-    #     op_code.stack.push_op(numpy.float32(2.15))
-    #     op_code.stack.push_op(numpy.float32(1.40))
-    #     fadd(op_code)
-    #     self.assertAlmostEqual(op_code.stack.peek(), 3.55, places=2)
+    def test_fadd(self):
+        """tests the fadd opcodes"""
+        self.test.stack.push_op(numpy.float32(0.0))
+        self.test.stack.push_op(numpy.float32(0.0))
+        fadd(self.test)
+        self.assertEqual(self.test.stack.peek(), 0.0)
+        self.test.stack.push_op(numpy.float32(2.0))
+        self.test.stack.push_op(numpy.float32(1.0))
+        fadd(self.test)
+        self.assertEqual(self.test.stack.peek(), 3.0)
+        self.test.stack.push_op(numpy.float32(2.15))
+        self.test.stack.push_op(numpy.float32(1.40))
+        fadd(self.test)
+        self.assertAlmostEqual(self.test.stack.peek(), 3.55, places=2)
 
-    # def test_fsub(self):
-    #     """tests the fsub opcodes"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.float32(0.0))
-    #     op_code.stack.push_op(numpy.float32(0.0))
-    #     fsub(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 0.0)
-    #     op_code.stack.push_op(numpy.float32(5.0))
-    #     op_code.stack.push_op(numpy.float32(2.0))
-    #     fsub(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 3.0)
+    def test_fsub(self):
+        """tests the fsub opcodes"""
+        self.test.stack.push_op(numpy.float32(0.0))
+        self.test.stack.push_op(numpy.float32(0.0))
+        fsub(self.test)
+        self.assertEqual(self.test.stack.peek(), 0.0)
+        self.test.stack.push_op(numpy.float32(5.0))
+        self.test.stack.push_op(numpy.float32(2.0))
+        fsub(self.test)
+        self.assertEqual(self.test.stack.peek(), 3.0)
 
-    # def test_fmul(self):
-    #     """tests the fmul opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.float32(2.0))
-    #     op_code.stack.push_op(numpy.float32(3.0))
-    #     fmul(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 6.0)
-    #     op_code.stack.push_op(numpy.float32(2.0))
-    #     op_code.stack.push_op(numpy.float32(3.0))
-    #     fmul(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 6.0)
+    def test_fmul(self):
+        """tests the fmul opcode"""
+        self.test.stack.push_op(numpy.float32(2.0))
+        self.test.stack.push_op(numpy.float32(3.0))
+        fmul(self.test)
+        self.assertEqual(self.test.stack.peek(), 6.0)
+        self.test.stack.push_op(numpy.float32(2.0))
+        self.test.stack.push_op(numpy.float32(3.0))
+        fmul(self.test)
+        self.assertEqual(self.test.stack.peek(), 6.0)
 
-    # def test_fdiv(self):
-    #     """tests the fdiv opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.float32(4.0))
-    #     op_code.stack.push_op(numpy.float32(2.0))
-    #     fdiv(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 2.0)
+    def test_fdiv(self):
+        """tests the fdiv opcode"""
+        self.test.stack.push_op(numpy.float32(4.0))
+        self.test.stack.push_op(numpy.float32(2.0))
+        fdiv(self.test)
+        self.assertEqual(self.test.stack.peek(), 2.0)
 
-    # def test_frem(self):
-    #     """tests the irem opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.float32(0.0))
-    #     op_code.stack.push_op(numpy.float32(0.0))
-    #     frem(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 0.0)
-    #     op_code.stack.push_op(numpy.float32(5.0))
-    #     op_code.stack.push_op(numpy.float32(5.0))
-    #     frem(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 0.0)
+    def test_frem(self):
+        """tests the irem opcode"""
+        self.test.stack.push_op(numpy.float32(0.0))
+        self.test.stack.push_op(numpy.float32(0.0))
+        frem(self.test)
+        self.assertEqual(self.test.stack.peek(), 0.0)
+        self.test.stack.push_op(numpy.float32(5.0))
+        self.test.stack.push_op(numpy.float32(5.0))
+        frem(self.test)
+        self.assertEqual(self.test.stack.peek(), 0.0)
 
-    # def test_ladd(self):
-    #     """tests the ladd opcodes"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int64(0), push_twice)
-    #     op_code.stack.push_op(numpy.int64(0), push_twice)
-    #     ladd(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 0)
-    #     op_code.stack.push_op(numpy.int64(2), push_twice)
-    #     op_code.stack.push_op(numpy.int64(1), push_twice)
-    #     ladd(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 3)
-    #     op_code.stack.push_op(numpy.int64(2), push_twice)
-    #     op_code.stack.push_op(numpy.int64(4), push_twice)
-    #     ladd(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 6)
+    def test_ladd(self):
+        """tests the ladd opcodes"""
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        ladd(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 0)
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        self.test.stack.push_op(numpy.int64(1), push_twice)
+        ladd(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 3)
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        self.test.stack.push_op(numpy.int64(4), push_twice)
+        ladd(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 6)
 
-    # def test_lsub(self):
-    #     """tests the lsub opcodes"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int64(0), push_twice)
-    #     op_code.stack.push_op(numpy.int64(0), push_twice)
-    #     lsub(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 0)
-    #     op_code.stack.push_op(numpy.int64(5), push_twice)
-    #     op_code.stack.push_op(numpy.int64(2), push_twice)
-    #     lsub(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 3)
+    def test_lsub(self):
+        """tests the lsub opcodes"""
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        lsub(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 0)
+        self.test.stack.push_op(numpy.int64(5), push_twice)
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        lsub(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 3)
 
-    # def test_lmul(self):
-    #     """tests the lmul opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int64(2), push_twice)
-    #     op_code.stack.push_op(numpy.int64(3), push_twice)
-    #     lmul(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 6)
-    #     op_code.stack.push_op(numpy.int64(-2), push_twice)
-    #     op_code.stack.push_op(numpy.int64(-3), push_twice)
-    #     lmul(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 6)
+    def test_lmul(self):
+        """tests the lmul opcode"""
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        self.test.stack.push_op(numpy.int64(3), push_twice)
+        lmul(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 6)
+        self.test.stack.push_op(numpy.int64(-2), push_twice)
+        self.test.stack.push_op(numpy.int64(-3), push_twice)
+        lmul(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 6)
 
-    # def test_ldiv(self):
-    #     """tests the ldiv opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int64(4), push_twice)
-    #     op_code.stack.push_op(numpy.int64(2), push_twice)
-    #     ldiv(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 2)
-    #     op_code.stack.push_op(numpy.int64(-4), push_twice)
-    #     op_code.stack.push_op(numpy.int64(2), push_twice)
-    #     ldiv(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), -2)
+    def test_ldiv(self):
+        """tests the ldiv opcode"""
+        self.test.stack.push_op(numpy.int64(4), push_twice)
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        ldiv(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 2)
+        self.test.stack.push_op(numpy.int64(-4), push_twice)
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        ldiv(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), -2)
 
-    # def test_lrem(self):
-    #     """tests the lrem opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int64(0), push_twice)
-    #     op_code.stack.push_op(numpy.int64(0), push_twice)
-    #     lrem(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 0)
-    #     op_code.stack.push_op(numpy.int64(5), push_twice)
-    #     op_code.stack.push_op(numpy.int64(5), push_twice)
-    #     lrem(op_code)
-    #     self.assertEqual(op_code.stack.pop_op(pop_twice), 0)
+    def test_lrem(self):
+        """tests the lrem opcode"""
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        lrem(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 0)
+        self.test.stack.push_op(numpy.int64(5), push_twice)
+        self.test.stack.push_op(numpy.int64(5), push_twice)
+        lrem(self.test)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), 0)
