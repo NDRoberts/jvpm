@@ -7,6 +7,7 @@ class ClassFile:
 
     def __init__(self, name):
         """Instantiate a ClassFile and read its constants, fields, methods, & attributes"""
+        print(name)
         with open(name, "rb") as binary_file:
             self.data = bytes(binary_file.read())
             self.offset = 0

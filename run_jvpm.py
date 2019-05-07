@@ -9,9 +9,15 @@ import sys
 
 class Jvpm:
 
-    def __init__(self):
+    def __init__(self, *java_class):
+        if not java_class:
+            if len(sys.argv) > 1:
+                java_class = sys.argv[1]
+            else:
+                print('You\'re gonna have to give me a .class file, pardner!')
+                exit('BIG STUPID FAIL')
         self.stack = JvmStack()
-        self.class_data = ClassFile(sys.argv[1])
+        self.class_data = ClassFile(java_class[0])
         self.nmt = MethodTable(self.stack)
         self.ops = OpCodes(self.stack, self.class_data, self.nmt)
 

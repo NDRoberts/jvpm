@@ -5,13 +5,13 @@ from unittest.mock import patch, call
 import numpy
 from jvpm.op_codes import *
 from jvpm.jvm_stack import *
-from jvpm.run_jvpm import *
+from run_jvpm import *
 
 numpy.warnings.filterwarnings("ignore")
 
 
 class TestOpCodes(unittest.TestCase):
-    test = Jvpm()
+    test = Jvpm('jvpm/Java/test.class')
 
     """this class tests the op_codes class"""
     # @patch('builtins.print')
