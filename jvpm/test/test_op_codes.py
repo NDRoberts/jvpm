@@ -27,6 +27,30 @@ class TestOpCodes(unittest.TestCase):
             aload(self.test, i)
             self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[i])
 
+    def test_aload_0(self):
+        """ Test the aload_0 opcode. """
+
+        aload_0(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[0])
+
+    def test_aload_1(self):
+        """ Test the aload_1 opcode. """
+
+        aload_1(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[1])
+
+    def test_aload_2(self):
+        """ Test the aload_2 opcode. """
+
+        aload_2(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[2])
+
+    def test_aload_3(self):
+        """ Test the aload_3 opcode. """
+
+        aload_3(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[3])
+
     # def test_not_implmented(self):
     #     """this method tests the OpCodes class"""
     #     self.assertEqual(OpCodes().interpret(0), 'not implemented')
