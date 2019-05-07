@@ -23,8 +23,7 @@ class TestOpCodes(unittest.TestCase):
     def test_aload(self):
         """tests the aload opcode method"""
         
-        length = len(self.test.stack.local_array)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             aload(self.test, i)
             self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[i])
 
@@ -69,20 +68,18 @@ class TestOpCodes(unittest.TestCase):
 
     def test_iinc(self):
         """tests iinc method"""        
-        length = len(self.test.stack.local_array)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             iinc(self.test, i, i)
             self.test.stack.local_array[i] = i
             self.assertEqual(self.test.stack.local_array[i], i)
 
     def test_istore(self):
         """tests istore method"""        
-        length = len(self.test.stack.local_array)
         self.test.stack.push_op(3)
         self.test.stack.push_op(2)
         self.test.stack.push_op(1)
         self.test.stack.push_op(0)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             istore(self.test, i)
             self.assertEqual(self.test.stack.local_array[i], i)
 
@@ -113,25 +110,22 @@ class TestOpCodes(unittest.TestCase):
 
     def test_lstore(self):
         """tests the lstore method for 64 bit longs"""
-        
-        length = len(self.test.stack.local_array)
         self.test.stack.push_op(numpy.int64(3), push_twice)
         self.test.stack.push_op(numpy.int64(2), push_twice)
         self.test.stack.push_op(numpy.int64(1), push_twice)
         self.test.stack.push_op(numpy.int64(0), push_twice)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             lstore(self.test, i)
             self.assertEqual(self.test.stack.local_array[i], numpy.int64(i))
 
     def test_fstore(self):
         """tests the fstore method for 32 bit floats"""
         
-        length = len(self.test.stack.local_array)
         self.test.stack.push_op(numpy.float32(3), push_twice)
         self.test.stack.push_op(numpy.float32(2), push_twice)
         self.test.stack.push_op(numpy.float32(1), push_twice)
         self.test.stack.push_op(numpy.float32(0), push_twice)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             fstore(self.test, i)
             self.assertEqual(self.test.stack.local_array[i], numpy.float32(i))
 
@@ -193,10 +187,7 @@ class TestOpCodes(unittest.TestCase):
 
     def test_iload(self):
         """tests iload method"""
-        
-        #tests every load index from 0 to length
-        length = len(self.test.stack.local_array)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             iload(self.test, i)
             self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[i])
 
@@ -446,9 +437,7 @@ class TestOpCodes(unittest.TestCase):
     def test_lload(self):
         """tests lload method"""
         
-        #tests every load index from 0 to length
-        length = len(self.test.stack.local_array)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             lload(self.test, i)
             self.assertEqual(self.test.stack.pop_op(pop_twice), self.test.stack.local_array[i])
 
@@ -669,9 +658,7 @@ class TestOpCodes(unittest.TestCase):
 
     def test_fload(self):
         """tests fload method"""
-        #tests every load index from 0 to length
-        length = len(self.test.stack.local_array)
-        for i in range(0, length):
+        for i in range(0, len(self.test.stack.local_array)):
             fload(self.test, i)
             self.assertEqual(self.test.stack.pop_op(), self.test.stack.local_array[i])
 
