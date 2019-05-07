@@ -10,7 +10,7 @@ class ClassFile:
         with open(name, "rb") as binary_file:
             self.data = bytes(binary_file.read())
             self.offset = 0
-            self._I_AM_CODE = 0
+            self.i_am_code = 0
             self.run_code = bytearray(0x00)
             self.magic = get_u4(self)
             self.minor = int.from_bytes(get_u2(self), byteorder='big')
@@ -57,7 +57,9 @@ class ClassFile:
 
 
 def get_constant_pool(self):
-    """Collect the Constant Pool from a .class file as a list, rendering each constant in a Python-readable format"""
+    """Collect the Constant Pool from a .class file as a list.
+     Each constant is in a Python-readable format
+     """
     tag_table = {
         1: {
             "type": "utf-8",
@@ -160,7 +162,7 @@ def get_constant_pool(self):
                 constant[aspect] = constant[aspect]()
         pool[index] = constant
         if tag == 1 and constant["value"] == "Code":
-            self._I_AM_CODE = index
+            self.i_am_code = index
         if tag in [5, 6]:
             index += 1
     return pool
@@ -207,7 +209,7 @@ def get_an_attribute(self):
     # print(attribute['length'])
     attribute["info"] = get_extended(self, length=attribute["length"])
     # # WANGLE OUT CODE ATTRIBUTES
-    if attribute["name_index"] == self._I_AM_CODE:
+    if attribute["name_index"] == self.i_am_code:
         self.run_code.extend(attribute["info"])
     return attribute
 
@@ -245,9 +247,10 @@ def get_u8(self):
 
 
 def get_extended(self, length=0):
-    """Fetch a variable-length value from the class data"""
-    """If no length value is supplied, assume the first two bytes
-    of the target value represent its length."""
+    """Fetch a variable-length value from the class data.
+    If no length value is supplied, assume the first two bytes
+    of the target value represent its length.
+    """
     if not length:
         length = int.from_bytes(get_u2(self), byteorder="big")
     value = self.data[self.offset : self.offset + length]

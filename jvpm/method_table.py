@@ -15,6 +15,7 @@ class MethodTable:
         }
 
     def call(self, method):
+        """ Implement the call method."""
         self.method = method
         return self.table[self.method['method_name']['value']](self)
 

@@ -21,6 +21,7 @@ class OpCodes():
                       0x2b: [aload_1, 1],
                       0x2c: [aload_2, 1],
                       0x2d: [aload_3, 1],
+                      0x10: [bipush, 2],
                       0x59: [dup, 1],
                       0x8d: [f2d, 1],
                       0x8b: [f2i, 1],
@@ -112,9 +113,7 @@ class OpCodes():
                       0x83: [lxor, 1],
                       0x00: [not_implemented, 1],
                       0x01: [also_not_implemented, 1],
-                      0xb1: [ret, 2],
-                      0x10: [bipush, 2]}
-        
+                      0xb1: [ret, 2]}
 
     def parse_codes(self):
         """Call the Interpret function on each opcode in the provided data."""
@@ -409,26 +408,26 @@ It will be expanded in the future if we start loading other classes."""
 
 def getstatic(self, index_byte_1, index_byte_2):
     """Push a field reference from the Constant Pool to the stack."""
-    index = (index_byte_1 << 8) + index_byte_2 #int.from_bytes((index_byte_1 << 8) + index_byte_2, byteorder="big")
+    index = (index_byte_1 << 8) + index_byte_2
     self.stack.push_op(self.class_data.constant_pool[index])
 
 def ldc(self):
     """implements ldc"""
-# take into account the fact that the index for ldc is a single byte
+    # take into account the fact that the index for ldc is a single byte
     index = b"\x00" + self.data[self.byte_count - 1:self.byte_count]
     self.constant_pool.load_constant(index, self.stack)
 
 def old_invokevirtual(self):
     """implements invokevirtual"""
-# look up the method to be invoked.
+    # look up the method to be invoked.
     methodref = self.constant_pool.lookup_constant(self.data[self.byte_count - 2:self.byte_count])
-# get the name of the class for this method.
+    # get the name of the class for this method.
     classref = self.constant_pool.lookup_constant(methodref[1:3])
     utf8_index = classref[1:]
     utf8_const = self.constant_pool.lookup_constant(utf8_index)
     classname = utf8_const[3:].decode("utf-8")
-# after all that pointer chasing, we still have to do it again to get the
-# name and type of the method
+    # after all that pointer chasing, we still have to do it again to get the
+    # name and type of the method
     nat_index = methodref[3:]
     nat_const = self.constant_pool.lookup_constant(nat_index)
     methodname_index = nat_const[1:3]
@@ -437,12 +436,13 @@ def old_invokevirtual(self):
     methodtype_index = nat_const[3:]
     methodtype_const = self.constant_pool.lookup_constant(methodtype_index)
     methodtype = methodtype_const[3:].decode("utf-8")
-# finally, we can invoke the method!
+    # finally, we can invoke the method!
     official_name = classname + "." + methodname + methodtype
     self.nmt.call(self, official_name)
 
 
 def invokevirtual(self, index_byte_1, index_byte_2):
+    """ Implement invokevirtual opcode. """
     index = (index_byte_1 << 8) + index_byte_2
     class_index = self.class_data.constant_pool[index]['class_index']
     name_and_type_index = self.class_data.constant_pool[index]['name_and_type_index']
@@ -452,7 +452,8 @@ def invokevirtual(self, index_byte_1, index_byte_2):
     class_name = self.class_data.constant_pool[class_name_index]
     method_name = self.class_data.constant_pool[method_name_index]
     method_descriptor = self.class_data.constant_pool[method_descriptor_index]
-    invoked_method = {'class_name': class_name, 'method_name': method_name, 'method_descriptor': method_descriptor}
+    invoked_method = {'class_name': class_name, 'method_name': method_name,
+                      'method_descriptor': method_descriptor}
     self.nmt.call(invoked_method)
 
 
@@ -465,12 +466,13 @@ def invokespecial(self, index_byte_1, index_byte_2):
 
 def old_new(self):
     """Find the constant representing the class to be instantiated, then STACK IT"""
-    addr1 = self.data[self.byte_count-2]
-    addr2 = self.data[self.byte_count-1]
-    new_constant = self.constant_pool.lookup_constant(addr1|addr2)
+
+    new_constant = self.constant_pool.lookup_constant(self.data[self.byte_count-2:self.byte_count])
     self.stack.push_op(new_constant)
 
 def new(self, index_byte_1, index_byte_2):
+    """ Instanitate a new object. """
+
     index = (index_byte_1 << 8) + index_byte_2
     print(self.class_data.constant_pool[index])
     name_index = self.class_data.constant_pool[index]['name_index']
@@ -715,4 +717,5 @@ def lrem(self):
         lsub(self)
 
 def bipush(self, byte):
+    """ Push a byte onto the stack. """
     self.stack.push_op(byte)
