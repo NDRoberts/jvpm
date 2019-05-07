@@ -2,7 +2,7 @@
 # utilizes NumPy package to handle 32 bit int over/underflow in Java
 import numpy  # to get the java-like behavior for arithmetic
 
-from jvpm.jvm_stack import JvmStack, pop_twice, push_twice
+from .jvm_stack import JvmStack, pop_twice, push_twice
 # shuts off the overflow warnings from numpy
 numpy.seterr(over="ignore", under="ignore")
 
@@ -32,7 +32,7 @@ class OpCodes():
                       0x0c: [fconst_1, 1],
                       0x0d: [fconst_2, 1],
                       0x6e: [fdiv, 1],
-                      0x17: [fload, 1],
+                      0x17: [fload, 2],
                       0x22: [fload_0, 1],
                       0x23: [fload_1, 1],
                       0x24: [fload_2, 1],
@@ -42,12 +42,12 @@ class OpCodes():
                       0x72: [frem, 1],
                       0x38: [fstore, 1],
                       0x43: [fstore_0, 1],
-                      0x44: [fstore_1, 1],
+                      0x44: [fstore_1, 2],
                       0x45: [fstore_2, 1],
                       0x46: [fstore_3, 1],
                       0x66: [fsub, 1],
                       0xb2: [getstatic, 3],
-                      0xbb: [new, 1],
+                      0xbb: [new, 3],
                       0x91: [i2b, 1],
                       0x92: [i2c, 1],
                       0x87: [i2d, 1],
@@ -63,7 +63,7 @@ class OpCodes():
                       0x08: [iconst_5, 1],
                       0x6c: [idiv, 1],
                       0x84: [iinc, 3],
-                      0x15: [iload, 1],
+                      0x15: [iload, 2],
                       0x1a: [iload_0, 1],
                       0x1b: [iload_1, 1],
                       0x1c: [iload_2, 1],
@@ -76,7 +76,7 @@ class OpCodes():
                       0x70: [irem, 1],
                       0X78: [ishl, 1],
                       0x7a: [ishr, 1],
-                      0x36: [istore, 1],
+                      0x36: [istore, 2],
                       0x3b: [istore_0, 1],
                       0x3c: [istore_1, 1],
                       0x3d: [istore_2, 1],
@@ -94,7 +94,7 @@ class OpCodes():
                       0x0a: [lconst_1, 1],
                       0x12: [ldc, 2],
                       0x6d: [ldiv, 1],
-                      0x16: [lload, 1],
+                      0x16: [lload, 2],
                       0x1e: [lload_0, 1],
                       0x1f: [lload_1, 1],
                       0x20: [lload_2, 1],
@@ -103,7 +103,7 @@ class OpCodes():
                       0x71: [lrem, 1],
                       0x79: [lshl, 1],
                       0x7b: [lshr, 1],
-                      0x37: [lstore, 1],
+                      0x37: [lstore, 2],
                       0x3f: [lstore_0, 1],
                       0x40: [lstore_1, 1],
                       0x41: [lstore_2, 1],
@@ -112,7 +112,8 @@ class OpCodes():
                       0x83: [lxor, 1],
                       0x00: [not_implemented, 1],
                       0x01: [also_not_implemented, 1],
-                      0xb1: [ret, 2]}
+                      0xb1: [ret, 2],
+                      0x10: [bipush, 2]}
         
 
     def parse_codes(self):
@@ -131,6 +132,7 @@ class OpCodes():
         if self.table[value][1] > 1:
             args = self.data[self.byte_count + 1 : self.byte_count + self.table[value][1]]
         self.byte_count += self.table[value][1]
+        # print('Doing this:', self.table[value][0], 'with args', args)
         return self.table[value][0](self, *args)
 
 
@@ -399,11 +401,16 @@ def i2s(self):
     convert_this = self.stack.pop_op()
     self.stack.push_op(numpy.int16(convert_this))
 
-def getstatic(self):
+def old_getstatic(self):
     """This is a stub implementation of getstatic.
 It will be expanded in the future if we start loading other classes."""
     index = self.data[self.byte_count - 2:self.byte_count]
     self.constant_pool.load_constant(index, self.stack)
+
+def getstatic(self, index_byte_1, index_byte_2):
+    """Push a field reference from the Constant Pool to the stack."""
+    index = (index_byte_1 << 8) + index_byte_2 #int.from_bytes((index_byte_1 << 8) + index_byte_2, byteorder="big")
+    self.stack.push_op(self.class_data.constant_pool[index])
 
 def ldc(self):
     """implements ldc"""
@@ -456,12 +463,19 @@ def invokespecial(self, index_byte_1, index_byte_2):
     # return byte_1 + byte_2
     invokevirtual(self, index_byte_1, index_byte_2)
 
-def new(self):
+def old_new(self):
     """Find the constant representing the class to be instantiated, then STACK IT"""
     addr1 = self.data[self.byte_count-2]
     addr2 = self.data[self.byte_count-1]
     new_constant = self.constant_pool.lookup_constant(addr1|addr2)
     self.stack.push_op(new_constant)
+
+def new(self, index_byte_1, index_byte_2):
+    index = (index_byte_1 << 8) + index_byte_2
+    print(self.class_data.constant_pool[index])
+    name_index = self.class_data.constant_pool[index]['name_index']
+    print(self.class_data.constant_pool[name_index])
+    self.stack.push_op(self.class_data.constant_pool[name_index]['value'])
 
 def dup(self):
     """pop first value on the stack, duplicate and push back onto stack"""
@@ -699,3 +713,6 @@ def lrem(self):
         self.stack.push_op(val2, push_twice)
         lmul(self)
         lsub(self)
+
+def bipush(self, byte):
+    self.stack.push_op(byte)

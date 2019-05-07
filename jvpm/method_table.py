@@ -10,7 +10,8 @@ class MethodTable:
         self.table = {
             'println': println,
             '<init>': init,
-            'nextInt': next_int
+            'nextInt': next_int,
+            'close': close
         }
 
     def call(self, method):
@@ -36,3 +37,8 @@ read in an int and pushes that int onto the stack"""
     self.stack.pop_op()
     i = int(input())
     self.stack.push_op(i)
+
+def close(self):
+    """Close an opened instance of a file or scanner, probably."""
+    while self.stack.peek():
+        self.stack.pop_op()

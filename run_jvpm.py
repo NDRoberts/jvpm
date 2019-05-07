@@ -16,6 +16,7 @@ class Jvpm:
         self.nmt = MethodTable(self.stack)
         self.ops = OpCodes(self.stack, self.class_data, self.nmt)
 
+        print('\nAnd then I ran:')
         self.ops.parse_codes()
 
         #for remainder in self.stack.stack:

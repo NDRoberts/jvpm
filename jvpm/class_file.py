@@ -15,6 +15,7 @@ class ClassFile:
             self.magic = get_u4(self)
             self.minor = int.from_bytes(get_u2(self), byteorder='big')
             self.major = int.from_bytes(get_u2(self), byteorder='big')
+            print('About to parse the CONSTANT POOL...')
             self.pool_count = int.from_bytes(get_u2(self), byteorder="big")
 
             self.cp_begin = self.offset
@@ -24,26 +25,34 @@ class ClassFile:
             self.this_class = get_u2(self)
             self.super_class = get_u2(self)
 
+            print('About to parse the INTERFACES...')
             self.interfaces_count = int.from_bytes(
                 get_u2(self), byteorder="big"
             )
             self.interfaces_begin = self.offset
-            self.interfaces = get_info(self, self.interfaces_count)
+            if self.interfaces_count:
+                self.interfaces = get_info(self, self.interfaces_count)
 
+            print('About to parse the FIELDS...')
             self.fields_count = int.from_bytes(get_u2(self), byteorder="big")
             self.fields_begin = self.offset
-            self.fields = get_info(self, self.fields_count)
+            if self.fields_count:
+                self.fields = get_info(self, self.fields_count)
 
+            print('About to parse the METHODS...')
             self.methods_count = int.from_bytes(get_u2(self), byteorder="big")
             self.methods_begin = self.offset
-            self.methods = get_info(self, self.methods_count)
+            if self.methods_count:
+                self.methods = get_info(self, self.methods_count)
 
+            print('About to parse the CLASS ATTRIBUTES...')
             self.class_attributes_count = int.from_bytes(
                 get_u2(self), byteorder="big"
             )
-            self.class_attributes = get_attributes(
-                self, self.class_attributes_count
-            )
+            if self.class_attributes_count:
+                self.class_attributes = get_attributes(
+                    self, self.class_attributes_count
+                )
 
 
 
@@ -160,7 +169,7 @@ def get_constant_pool(self):
 def get_info(self, count):
     """Get the contents of a Field or Method section"""
     info = {0: {"values_count": count}}
-    for val in range(1, count):
+    for val in range(1, count + 1):
         info[val] = {}
         info[val]["access_flags"] = get_u2(self)
         info[val]["name_index"] = int.from_bytes(get_u2(self), byteorder="big")
@@ -180,9 +189,9 @@ def get_attributes(self, count):
     """Get the attributes of a Field, Method, or Class"""
     attributes = []
     attributes.append(0)
-    num_attributes = 1
+    num_attributes = 0
     if count:
-        while num_attributes <= count:
+        while num_attributes < count:
             attr = get_an_attribute(self)
             attributes.append(attr)
             attributes[0] += 6 + attr["length"]
@@ -195,6 +204,7 @@ def get_an_attribute(self):
     attribute = {}
     attribute["name_index"] = int.from_bytes(get_u2(self), byteorder="big")
     attribute["length"] = int.from_bytes(get_u4(self), byteorder="big")
+    # print(attribute['length'])
     attribute["info"] = get_extended(self, length=attribute["length"])
     # # WANGLE OUT CODE ATTRIBUTES
     if attribute["name_index"] == self._I_AM_CODE:
@@ -206,6 +216,7 @@ def get_u1(self):
     """Fetch a single-byte value from the class data"""
     value = self.data[self.offset]
     self.offset += 1
+    # print('Fetched',value)
     return value
 
 
@@ -213,6 +224,7 @@ def get_u2(self):
     """Fetch a two-byte value from the class data"""
     value = self.data[self.offset : self.offset + 2]
     self.offset += 2
+    # print('Fetched',value)
     return value
 
 
@@ -220,6 +232,7 @@ def get_u4(self):
     """Fetch a four-byte value from the class data"""
     value = self.data[self.offset : self.offset + 4]
     self.offset += 4
+    # print('Fetched',value)
     return value
 
 
@@ -227,6 +240,7 @@ def get_u8(self):
     """Fetch an eight-byte value from the class data"""
     value = self.data[self.offset : self.offset + 8]
     self.offset += 8
+    # print('Fetched',value)
     return value
 
 
@@ -238,4 +252,5 @@ def get_extended(self, length=0):
         length = int.from_bytes(get_u2(self), byteorder="big")
     value = self.data[self.offset : self.offset + length]
     self.offset += length
+    # print('Fetched',value)
     return value
