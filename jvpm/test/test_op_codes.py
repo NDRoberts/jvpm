@@ -5,7 +5,7 @@ from unittest.mock import patch, call
 import numpy
 from jvpm.op_codes import *
 from jvpm.jvm_stack import *
-from run_jvpm import *
+from run_jvpm import Jvpm
 
 numpy.warnings.filterwarnings("ignore")
 
