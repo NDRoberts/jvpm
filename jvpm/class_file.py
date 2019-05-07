@@ -15,7 +15,7 @@ class ClassFile:
             self.magic = get_u4(self)
             self.minor = int.from_bytes(get_u2(self), byteorder='big')
             self.major = int.from_bytes(get_u2(self), byteorder='big')
-            print('About to parse the CONSTANT POOL...')
+            # print('About to parse the CONSTANT POOL...')
             self.pool_count = int.from_bytes(get_u2(self), byteorder="big")
 
             self.cp_begin = self.offset
@@ -25,7 +25,7 @@ class ClassFile:
             self.this_class = get_u2(self)
             self.super_class = get_u2(self)
 
-            print('About to parse the INTERFACES...')
+            # print('About to parse the INTERFACES...')
             self.interfaces_count = int.from_bytes(
                 get_u2(self), byteorder="big"
             )
@@ -33,19 +33,19 @@ class ClassFile:
             if self.interfaces_count:
                 self.interfaces = get_info(self, self.interfaces_count)
 
-            print('About to parse the FIELDS...')
+            # print('About to parse the FIELDS...')
             self.fields_count = int.from_bytes(get_u2(self), byteorder="big")
             self.fields_begin = self.offset
             if self.fields_count:
                 self.fields = get_info(self, self.fields_count)
 
-            print('About to parse the METHODS...')
+            # print('About to parse the METHODS...')
             self.methods_count = int.from_bytes(get_u2(self), byteorder="big")
             self.methods_begin = self.offset
             if self.methods_count:
                 self.methods = get_info(self, self.methods_count)
 
-            print('About to parse the CLASS ATTRIBUTES...')
+            # print('About to parse the CLASS ATTRIBUTES...')
             self.class_attributes_count = int.from_bytes(
                 get_u2(self), byteorder="big"
             )
