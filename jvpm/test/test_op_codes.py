@@ -5,11 +5,14 @@ from unittest.mock import patch, call
 import numpy
 from jvpm.op_codes import *
 from jvpm.jvm_stack import *
+from jvpm.run_jvpm import *
 
 numpy.warnings.filterwarnings("ignore")
 
 
 class TestOpCodes(unittest.TestCase):
+    test = Jvpm()
+
     """this class tests the op_codes class"""
     # @patch('builtins.print')
     # def test_op_codes(self, mock_patch):
@@ -19,7 +22,7 @@ class TestOpCodes(unittest.TestCase):
 
     # def test_aload(self):
     #     """tests the aload opcode method"""
-    #     test = OpCodes()
+    #     
     #     length = len(test.local_array)
     #     for i in range(0, length):
     #         aload(test, i)
@@ -31,207 +34,195 @@ class TestOpCodes(unittest.TestCase):
 
     def test_iconst_m1(self):
         """tests iconst_m1 method, expected value -1"""
-        test = JvmStack()
-        iconst_m1(test)
-        self.assertEqual(test.stack.peek(), -1)
+        iconst_m1(self.test)
+        self.assertEqual(self.test.stack.peek(), -1)
 
-    # def test_iconst_0(self):
-    #     """tests iconst_0 method, expected value 0"""
-    #     test = OpCodes()
-    #     iconst_0(test)
-    #     self.assertEqual(test.stack.peek(), 0)
+    def test_iconst_0(self):
+        """tests iconst_0 method, expected value 0"""
+        iconst_0(self.test)
+        self.assertEqual(self.test.stack.peek(), 0)
 
-    # def test_iconst_1(self):
-    #     """tests iconst_1 method, expected value 1"""
-    #     test = OpCodes()
-    #     iconst_1(test)
-    #     self.assertEqual(test.stack.peek(), 1)
+    def test_iconst_1(self):
+        """tests iconst_1 method, expected value 1"""        
+        iconst_1(self.test)
+        self.assertEqual(self.test.stack.peek(), 1)
 
-    # def test_iconst_2(self):
-    #     """tests iconst_2 method, expected value 2"""
-    #     test = OpCodes()
-    #     iconst_2(test)
-    #     self.assertEqual(test.stack.peek(), 2)
+    def test_iconst_2(self):
+        """tests iconst_2 method, expected value 2"""        
+        iconst_2(self.test)
+        self.assertEqual(self.test.stack.peek(), 2)
 
-    # def test_iconst_3(self):
-    #     """tests iconst_3 method, expected value 3"""
-    #     test = OpCodes()
-    #     iconst_3(test)
-    #     self.assertEqual(test.stack.peek(), 3)
+    def test_iconst_3(self):
+        """tests iconst_3 method, expected value 3"""        
+        iconst_3(self.test)
+        self.assertEqual(self.test.stack.peek(), 3)
 
-    # def test_iconst_4(self):
-    #     """tests iconst_4 method, expected value 4"""
-    #     test = OpCodes()
-    #     iconst_4(test)
-    #     self.assertEqual(test.stack.peek(), 4)
+    def test_iconst_4(self):
+        """tests iconst_4 method, expected value 4"""        
+        iconst_4(self.test)
+        self.assertEqual(self.test.stack.peek(), 4)
 
-    # def test_iconst_5(self):
-    #     """tests iconst_5 method, expected value 5"""
-    #     test = OpCodes()
-    #     iconst_5(test)
-    #     self.assertEqual(test.stack.peek(), 5)
+    def test_iconst_5(self):
+        """tests iconst_5 method, expected value 5"""        
+        iconst_5(self.test)
+        self.assertEqual(self.test.stack.peek(), 5)
 
-    # def test_iinc(self):
-    #     """tests iinc method"""
-    #     test = OpCodes()
-    #     length = len(test.local_array)
-    #     for i in range(0, length):
-    #         iinc(test, i, i)
-    #         test.local_array[i] = i
-    #         self.assertEqual(test.local_array[i], i)
+    def test_iinc(self):
+        """tests iinc method"""        
+        length = len(self.test.stack.local_array)
+        for i in range(0, length):
+            iinc(self.test, i, i)
+            self.test.stack.local_array[i] = i
+            self.assertEqual(self.test.stack.local_array[i], i)
 
-    # def test_istore(self):
-    #     """tests istore method"""
-    #     test = OpCodes()
-    #     length = len(test.local_array)
-    #     test.stack.push_op(3)
-    #     test.stack.push_op(2)
-    #     test.stack.push_op(1)
-    #     test.stack.push_op(0)
-    #     for i in range(0, length):
-    #         istore(test, i)
-    #         self.assertEqual(test.local_array[i], i)
+    def test_istore(self):
+        """tests istore method"""        
+        length = len(self.test.stack.local_array)
+        self.test.stack.push_op(3)
+        self.test.stack.push_op(2)
+        self.test.stack.push_op(1)
+        self.test.stack.push_op(0)
+        for i in range(0, length):
+            istore(self.test, i)
+            self.assertEqual(self.test.stack.local_array[i], i)
 
-    # def test_istore_0(self):
-    #     """tests istore_0 method"""
-    #     test = OpCodes()
-    #     test.stack.push_op(0)
-    #     istore_0(test)
-    #     self.assertEqual(test.local_array[0], 0)
+    def test_istore_0(self):
+        """tests istore_0 method"""
+        self.test.stack.push_op(0)
+        istore_0(self.test)
+        self.assertEqual(self.test.stack.local_array[0], 0)
 
-    # def test_istore_1(self):
-    #     """tests istore_1 method"""
-    #     test = OpCodes()
-    #     test.stack.push_op(1)
-    #     istore_1(test)
-    #     self.assertEqual(test.local_array[1], 1)
+    def test_istore_1(self):
+        """tests istore_1 method"""
+        self.test.stack.push_op(1)
+        istore_1(self.test)
+        self.assertEqual(self.test.stack.local_array[1], 1)
 
-    # def test_istore_2(self):
-    #     """test istore_2 method"""
-    #     test = OpCodes()
-    #     test.stack.push_op(2)
-    #     istore_2(test)
-    #     self.assertEqual(test.local_array[2], 2)
+    def test_istore_2(self):
+        """test istore_2 method"""
+        self.test.stack.push_op(2)
+        istore_2(self.test)
+        self.assertEqual(self.test.stack.local_array[2], 2)
 
-    # def test_istore_3(self):
-    #     """tests istore_3 method"""
-    #     test = OpCodes()
-    #     test.stack.push_op(3)
-    #     istore_3(test)
-    #     self.assertEqual(test.local_array[3], 3)
+    def test_istore_3(self):
+        """tests istore_3 method"""
+        
+        self.test.stack.push_op(3)
+        istore_3(self.test)
+        self.assertEqual(self.test.stack.local_array[3], 3)
 
-    # def test_lstore(self):
-    #     """tests the lstore method for 64 bit longs"""
-    #     test = OpCodes()
-    #     length = len(test.local_array)
-    #     test.stack.push_op(numpy.int64(3), push_twice)
-    #     test.stack.push_op(numpy.int64(2), push_twice)
-    #     test.stack.push_op(numpy.int64(1), push_twice)
-    #     test.stack.push_op(numpy.int64(0), push_twice)
-    #     for i in range(0, length):
-    #         lstore(test, i)
-    #         self.assertEqual(test.local_array[i], numpy.int64(i))
+    def test_lstore(self):
+        """tests the lstore method for 64 bit longs"""
+        
+        length = len(self.test.stack.local_array)
+        self.test.stack.push_op(numpy.int64(3), push_twice)
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        self.test.stack.push_op(numpy.int64(1), push_twice)
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        for i in range(0, length):
+            lstore(self.test, i)
+            self.assertEqual(self.test.stack.local_array[i], numpy.int64(i))
 
-    # def test_fstore(self):
-    #     """tests the fstore method for 32 bit floats"""
-    #     test = OpCodes()
-    #     length = len(test.local_array)
-    #     test.stack.push_op(numpy.float32(3), push_twice)
-    #     test.stack.push_op(numpy.float32(2), push_twice)
-    #     test.stack.push_op(numpy.float32(1), push_twice)
-    #     test.stack.push_op(numpy.float32(0), push_twice)
-    #     for i in range(0, length):
-    #         fstore(test, i)
-    #         self.assertEqual(test.local_array[i], numpy.float32(i))
+    def test_fstore(self):
+        """tests the fstore method for 32 bit floats"""
+        
+        length = len(self.test.stack.local_array)
+        self.test.stack.push_op(numpy.float32(3), push_twice)
+        self.test.stack.push_op(numpy.float32(2), push_twice)
+        self.test.stack.push_op(numpy.float32(1), push_twice)
+        self.test.stack.push_op(numpy.float32(0), push_twice)
+        for i in range(0, length):
+            fstore(self.test, i)
+            self.assertEqual(self.test.stack.local_array[i], numpy.float32(i))
 
-    # def test_lstore_0(self):
-    #     """tests the lstore_0 opcode for 64 bit longs"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.int64(0), push_twice)
-    #     lstore_0(test)
-    #     self.assertEqual(test.local_array[0], 0)
+    def test_lstore_0(self):
+        """tests the lstore_0 opcode for 64 bit longs"""
+        
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        lstore_0(self.test)
+        self.assertEqual(self.test.stack.local_array[0], 0)
 
-    # def test_lstore_1(self):
-    #     """tests the lstore_1 opcode for 64 bit longs"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.int64(1), push_twice)
-    #     lstore_1(test)
-    #     self.assertEqual(test.local_array[1], 1)
+    def test_lstore_1(self):
+        """tests the lstore_1 opcode for 64 bit longs"""
+        
+        self.test.stack.push_op(numpy.int64(1), push_twice)
+        lstore_1(self.test)
+        self.assertEqual(self.test.stack.local_array[1], 1)
 
-    # def test_lstore_2(self):
-    #     """tests the lstore_2 opcode for 64 bit longs"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.int64(2), push_twice)
-    #     lstore_2(test)
-    #     self.assertEqual(test.local_array[2], 2)
+    def test_lstore_2(self):
+        """tests the lstore_2 opcode for 64 bit longs"""
+        
+        self.test.stack.push_op(numpy.int64(2), push_twice)
+        lstore_2(self.test)
+        self.assertEqual(self.test.stack.local_array[2], 2)
 
-    # def test_lstore_3(self):
-    #     """tests the lstore_3 opcode for 64 bit longs"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.int64(3), push_twice)
-    #     lstore_3(test)
-    #     self.assertEqual(test.local_array[3], 3)
+    def test_lstore_3(self):
+        """tests the lstore_3 opcode for 64 bit longs"""
+        
+        self.test.stack.push_op(numpy.int64(3), push_twice)
+        lstore_3(self.test)
+        self.assertEqual(self.test.stack.local_array[3], 3)
 
-    # def test_fstore_0(self):
-    #     """tests the fstore_0 opcode for 32 bit floats"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.int64(0), push_twice)
-    #     fstore_0(test)
-    #     self.assertEqual(test.local_array[0], 0)
+    def test_fstore_0(self):
+        """tests the fstore_0 opcode for 32 bit floats"""
+        
+        self.test.stack.push_op(numpy.int64(0), push_twice)
+        fstore_0(self.test)
+        self.assertEqual(self.test.stack.local_array[0], 0)
 
-    # def test_fstore_1(self):
-    #     """tests the lstore_1 opcode for 32 bit floats"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.float32(1), push_twice)
-    #     fstore_1(test)
-    #     self.assertEqual(test.local_array[1], 1)
+    def test_fstore_1(self):
+        """tests the lstore_1 opcode for 32 bit floats"""
+        
+        self.test.stack.push_op(numpy.float32(1), push_twice)
+        fstore_1(self.test)
+        self.assertEqual(self.test.stack.local_array[1], 1)
 
-    # def test_fstore_2(self):
-    #     """tests the fstore_2 opcode for 32 bit floats"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.float32(2), push_twice)
-    #     fstore_2(test)
-    #     self.assertEqual(test.local_array[2], 2)
+    def test_fstore_2(self):
+        """tests the fstore_2 opcode for 32 bit floats"""
+        
+        self.test.stack.push_op(numpy.float32(2), push_twice)
+        fstore_2(self.test)
+        self.assertEqual(self.test.stack.local_array[2], 2)
 
-    # def test_fstore_3(self):
-    #     """tests the fstore_3 opcode for 32 bit floats"""
-    #     test = OpCodes()
-    #     test.stack.push_op(numpy.float32(3), push_twice)
-    #     fstore_3(test)
-    #     self.assertEqual(test.local_array[3], 3)
+    def test_fstore_3(self):
+        """tests the fstore_3 opcode for 32 bit floats"""
+        
+        self.test.stack.push_op(numpy.float32(3), push_twice)
+        fstore_3(self.test)
+        self.assertEqual(self.test.stack.local_array[3], 3)
 
-    # def test_iload(self):
-    #     """tests iload method"""
-    #     test = OpCodes()
-    #     #tests every load index from 0 to length
-    #     length = len(test.local_array)
-    #     for i in range(0, length):
-    #         iload(test, i)
-    #         self.assertEqual(test.stack.peek(), test.local_array[i])
+    def test_iload(self):
+        """tests iload method"""
+        
+        #tests every load index from 0 to length
+        length = len(self.test.stack.local_array)
+        for i in range(0, length):
+            iload(self.test, i)
+            self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[i])
 
-    # def test_iload_0(self):
-    #     """tests iload_0 opcode"""
-    #     test = OpCodes()
-    #     iload_0(test)
-    #     self.assertEqual(test.stack.peek(), test.local_array[0])
+    def test_iload_0(self):
+        """tests iload_0 opcode"""
+        
+        iload_0(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[0])
 
-    # def test_iload_1(self):
-    #     """tests iload_1 opcode"""
-    #     test = OpCodes()
-    #     iload_1(test)
-    #     self.assertEqual(test.stack.peek(), test.local_array[1])
+    def test_iload_1(self):
+        """tests iload_1 opcode"""
+        
+        iload_1(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[1])
 
-    # def test_iload_2(self):
-    #     """tests iload_2 opcode"""
-    #     test = OpCodes()
-    #     iload_2(test)
-    #     self.assertEqual(test.stack.peek(), test.local_array[2])
+    def test_iload_2(self):
+        """tests iload_2 opcode"""
+        
+        iload_2(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[2])
 
-    # def test_iload_3(self):
-    #     """tests iload_3 opcode"""
-    #     test = OpCodes()
-    #     iload_3(test)
-    #     self.assertEqual(test.stack.peek(), test.local_array[3])
+    def test_iload_3(self):
+        """tests iload_3 opcode"""
+        
+        iload_3(self.test)
+        self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[3])
 
     # def test_mph1(self):
     #     """tests mph1 method"""
@@ -240,103 +231,94 @@ class TestOpCodes(unittest.TestCase):
     #         OpCodes().interpret(1)
 
     # def test_new(self):
-    #     """tests new method"""
-    #     test = OpCodes()
-    #     #new(test)
+    #     """tests new method"""        
+    #     new(test)
 
-    # def test_add_subtract(self):
-    #     """tests the iadd and isub opcodes"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int32(2000000000))
-    #     op_code.stack.push_op(numpy.int32(1000000000))
-    #     iadd(op_code)
-    #     self.assertEqual(op_code.stack.peek(), -1294967296)
-    #     op_code.stack.push_op(numpy.int32(10))
-    #     op_code.stack.push_op(numpy.int32(3))
-    #     isub(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 7)
+    def test_add_subtract(self):
+        """tests the iadd and isub opcodes"""
+        self.test.stack.push_op(numpy.int32(2000000000))
+        self.test.stack.push_op(numpy.int32(1000000000))
+        iadd(self.test)
+        self.assertEqual(self.test.stack.peek(), -1294967296)
+        self.test.stack.push_op(numpy.int32(10))
+        self.test.stack.push_op(numpy.int32(3))
+        isub(self.test)
+        self.assertEqual(self.test.stack.peek(), 7)
 
-    # def test_multiply(self):
-    #     """tests the imul opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int32(2000000000))
-    #     op_code.stack.push_op(numpy.int32(1000000000))
-    #     imul(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 1321730048)
+    def test_multiply(self):
+        """tests the imul opcode"""
+        self.test.stack.push_op(numpy.int32(2000000000))
+        self.test.stack.push_op(numpy.int32(1000000000))
+        imul(self.test)
+        self.assertEqual(self.test.stack.peek(), 1321730048)
 
-    # def test_divide(self):
-    #     """tests the idiv opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int32(128))
-    #     op_code.stack.push_op(numpy.int32(-3))
-    #     idiv(op_code)
-    #     self.assertEqual(op_code.stack.peek(), -42)
+    def test_divide(self):
+        """tests the idiv opcode"""
+        self.test.stack.push_op(numpy.int32(128))
+        self.test.stack.push_op(numpy.int32(-3))
+        idiv(self.test)
+        self.assertEqual(self.test.stack.peek(), -42)
 
-    # def test_mod(self):
-    #     """tests the irem opcode"""
-    #     op_code = OpCodes()
-    #     op_code.stack.push_op(numpy.int32(128))
-    #     op_code.stack.push_op(numpy.int32(-3))
-    #     irem(op_code)
-    #     self.assertEqual(op_code.stack.peek(), 2)
+    def test_mod(self):
+        """tests the irem opcode"""
+        self.test.stack.push_op(numpy.int32(128))
+        self.test.stack.push_op(numpy.int32(-3))
+        irem(self.test)
+        self.assertEqual(self.test.stack.peek(), 2)
 
-    # def test_iand(self):
-    #     """ Test the iand (Integer And) opcode """
-    #     ops = OpCodes()
-    #     # iand (240 & 15) should produce (0)
-    #     ops.stack.push_op(240)
-    #     ops.stack.push_op(15)
-    #     iand(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
-    #     # iand (43,690 & 50,790) should produce (33314)
-    #     ops.stack.push_op(43690)
-    #     ops.stack.push_op(50790)
-    #     iand(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 33314)
-    #     # iand (-2,147,483,647 & -1) should produce (-2,147,483,647)
-    #     ops.stack.push_op(-2147483647)
-    #     ops.stack.push_op(-1)
-    #     iand(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -2147483647)
+    def test_iand(self):
+        """ Test the iand (Integer And) opcode """
+        # iand (240 & 15) should produce (0)
+        self.test.stack.push_op(240)
+        self.test.stack.push_op(15)
+        iand(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
+        # iand (43,690 & 50,790) should produce (33314)
+        self.test.stack.push_op(43690)
+        self.test.stack.push_op(50790)
+        iand(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 33314)
+        # iand (-2,147,483,647 & -1) should produce (-2,147,483,647)
+        self.test.stack.push_op(-2147483647)
+        self.test.stack.push_op(-1)
+        iand(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -2147483647)
 
-    # def test_ineg(self):
-    #     """ Test the ineg (Integer Negate) opcode """
-    #     ops = OpCodes()
-    #     # ineg(254) should produce (-255)
-    #     ops.stack.push_op(254)
-    #     ineg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -255)
-    #     # ineg(0) should produce (-1)
-    #     ops.stack.push_op(0)
-    #     ineg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
-    #     # ineg(2,147,483,647) sould produce (-2,147,483,648)
-    #     ops.stack.push_op(2147483647)
-    #     ineg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -2147483648)
+    def test_ineg(self):
+        """ Test the ineg (Integer Negate) opcode """
+        # ineg(254) should produce (-255)
+        self.test.stack.push_op(254)
+        ineg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -255)
+        # ineg(0) should produce (-1)
+        self.test.stack.push_op(0)
+        ineg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
+        # ineg(2,147,483,647) sould produce (-2,147,483,648)
+        self.test.stack.push_op(2147483647)
+        ineg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -2147483648)
 
-    # def test_ior(self):
-    #     """ Test the ior (Integer Or) opcode """
-    #     ops = OpCodes()
-    #     # ior(240 | 15) should produce (255)
-    #     ops.stack.push_op(240)
-    #     ops.stack.push_op(15)
-    #     ior(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 255)
-    #     # ior(2,147,483,647 | -2,147,483,648) should produce (-1)
-    #     ops.stack.push_op(2147483647)
-    #     ops.stack.push_op(-2147483648)
-    #     ior(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
+    def test_ior(self):
+        """ Test the ior (Integer Or) opcode """
+        # ior(240 | 15) should produce (255)
+        self.test.stack.push_op(240)
+        self.test.stack.push_op(15)
+        ior(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 255)
+        # ior(2,147,483,647 | -2,147,483,648) should produce (-1)
+        self.test.stack.push_op(2147483647)
+        self.test.stack.push_op(-2147483648)
+        ior(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
 
-    # def test_ixor(self):
-    #     """ Test the ixor (Integer Exclusive Or) opcode """
-    #     ops = OpCodes()
-    #     # ixor(255 ^ 129) should produce (126)
-    #     ops.stack.push_op(255)
-    #     ops.stack.push_op(129)
-    #     ixor(ops)
-    #     self.assertEqual(ops.stack.peek(), 126)
+    def test_ixor(self):
+        """ Test the ixor (Integer Exclusive Or) opcode """
+        # ixor(255 ^ 129) should produce (126)
+        self.test.stack.push_op(255)
+        self.test.stack.push_op(129)
+        ixor(self.test)
+        self.assertEqual(self.test.stack.peek(), 126)
 
     # def test_ishl(self):
     #     """ Test the ishl (Integer Shift Left) opcode """
@@ -479,7 +461,7 @@ class TestOpCodes(unittest.TestCase):
 
     # def test_lload(self):
     #     """tests lload method"""
-    #     test = OpCodes()
+        
     #     #tests every load index from 0 to length
     #     length = len(test.local_array)
     #     for i in range(0, length):
@@ -488,25 +470,25 @@ class TestOpCodes(unittest.TestCase):
 
     # def test_lload_0(self):
     #     """tests iload_0 opcode"""
-    #     test = OpCodes()
+        
     #     lload_0(test)
     #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[0])
 
     # def test_lload_1(self):
     #     """tests iload_1 opcode"""
-    #     test = OpCodes()
+        
     #     lload_1(test)
     #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[1])
 
     # def test_lload_2(self):
     #     """tests iload_2 opcode"""
-    #     test = OpCodes()
+        
     #     lload_2(test)
     #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[2])
 
     # def test_lload_3(self):
     #     """tests iload_3 opcode"""
-    #     test = OpCodes()
+        
     #     lload_3(test)
     #     self.assertEqual(test.stack.pop_op(pop_twice), test.local_array[3])
 
@@ -711,7 +693,7 @@ class TestOpCodes(unittest.TestCase):
 
     # def test_fload(self):
     #     """tests fload method"""
-    #     test = OpCodes()
+        
     #     #tests every load index from 0 to length
     #     length = len(test.local_array)
     #     for i in range(0, length):
@@ -720,25 +702,25 @@ class TestOpCodes(unittest.TestCase):
 
     # def test_fload_0(self):
     #     """tests iload_0 opcode"""
-    #     test = OpCodes()
+        
     #     fload_0(test)
     #     self.assertEqual(test.stack.pop_op(), test.local_array[0])
 
     # def test_fload_1(self):
     #     """tests fload_1 opcode"""
-    #     test = OpCodes()
+        
     #     fload_1(test)
     #     self.assertEqual(test.stack.pop_op(), test.local_array[1])
 
     # def test_fload_2(self):
     #     """tests fload_2 opcode"""
-    #     test = OpCodes()
+        
     #     fload_2(test)
     #     self.assertEqual(test.stack.pop_op(), test.local_array[2])
 
     # def test_fload_3(self):
     #     """tests fload_3 opcode"""
-    #     test = OpCodes()
+        
     #     fload_3(test)
     #     self.assertEqual(test.stack.pop_op(), test.local_array[3])
 
