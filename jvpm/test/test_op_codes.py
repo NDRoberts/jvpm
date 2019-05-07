@@ -20,13 +20,13 @@ class TestOpCodes(unittest.TestCase):
     #     op_code = OpCodes()
     #     op_code.parse_codes(143)
 
-    # def test_aload(self):
-    #     """tests the aload opcode method"""
-    #     
-    #     length = len(test.local_array)
-    #     for i in range(0, length):
-    #         aload(test, i)
-    #         self.assertEqual(test.stack.peek(), test.local_array[i])
+    def test_aload(self):
+        """tests the aload opcode method"""
+        
+        length = len(self.test.stack.local_array)
+        for i in range(0, length):
+            aload(self.test, i)
+            self.assertEqual(self.test.stack.peek(), self.test.stack.local_array[i])
 
     # def test_not_implmented(self):
     #     """this method tests the OpCodes class"""
@@ -527,267 +527,246 @@ class TestOpCodes(unittest.TestCase):
         assert isinstance(self.test.stack.peek(), numpy.int64)
         self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(2))
 
-    # def test_lcmp(self):
-    #     """Test lcmp (compare 2 longs)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(41)
-    #     i2l(ops)
-    #     ops.stack.push_op(42)
-    #     i2l(ops)
-    #     lcmp(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
+    def test_lcmp(self):
+        """Test lcmp (compare 2 longs)"""
+        self.test.stack.push_op(41)
+        i2l(self.test)
+        self.test.stack.push_op(42)
+        i2l(self.test)
+        lcmp(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
 
-    #     ops.stack.push_op(43)
-    #     i2l(ops)
-    #     ops.stack.push_op(42)
-    #     i2l(ops)
+        self.test.stack.push_op(43)
+        i2l(self.test)
+        self.test.stack.push_op(42)
+        i2l(self.test)
 
-    #     lcmp(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 1)
+        lcmp(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 1)
 
-    #     ops.stack.push_op(42)
-    #     i2l(ops)
-    #     ops.stack.push_op(42)
-    #     i2l(ops)
-    #     lcmp(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
+        self.test.stack.push_op(42)
+        i2l(self.test)
+        self.test.stack.push_op(42)
+        i2l(self.test)
+        lcmp(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
 
-    # def test_lxor(self):
-    #     """test lxor (long exclusive or)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(7)
-    #     i2l(ops)
-    #     ops.stack.push_op(6)
-    #     i2l(ops)
-    #     lxor(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(1))
+    def test_lxor(self):
+        """test lxor (long exclusive or)"""
+        self.test.stack.push_op(7)
+        i2l(self.test)
+        self.test.stack.push_op(6)
+        i2l(self.test)
+        lxor(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(1))
 
-    #     ops.stack.push_op(-7)
-    #     i2l(ops)
-    #     ops.stack.push_op(-6)
-    #     i2l(ops)
-    #     lxor(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(3))
+        self.test.stack.push_op(-7)
+        i2l(self.test)
+        self.test.stack.push_op(-6)
+        i2l(self.test)
+        lxor(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(3))
 
-    #     ops.stack.push_op(-7)
-    #     i2l(ops)
-    #     ops.stack.push_op(6)
-    #     i2l(ops)
-    #     lxor(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(ops.stack.pop_op(pop_twice), numpy.int64(-1))
+        self.test.stack.push_op(-7)
+        i2l(self.test)
+        self.test.stack.push_op(6)
+        i2l(self.test)
+        lxor(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(self.test.stack.pop_op(pop_twice), numpy.int64(-1))
 
-    # def test_fcmpg(self):
-    #     """Test fcmpg (compare 2 floats)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     ops.stack.push_op(1/3)
-    #     i2f(ops)
-    #     fcmpg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
+    def test_fcmpg(self):
+        """Test fcmpg (compare 2 floats)"""
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        self.test.stack.push_op(1/3)
+        i2f(self.test)
+        fcmpg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
 
-    #     ops.stack.push_op(1/3)
-    #     i2f(ops)
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fcmpg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 1)
+        self.test.stack.push_op(1/3)
+        i2f(self.test)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fcmpg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 1)
 
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fcmpg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fcmpg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
 
-    #     ops.stack.push_op(numpy.nan)
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fcmpg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 1)
+        self.test.stack.push_op(numpy.nan)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fcmpg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 1)
 
-    #     ops.stack.push_op(1/7)
-    #     ops.stack.push_op(numpy.nan)
-    #     i2f(ops)
-    #     fcmpg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 1)
+        self.test.stack.push_op(1/7)
+        self.test.stack.push_op(numpy.nan)
+        i2f(self.test)
+        fcmpg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 1)
 
-    # def test_fcmpl(self):
-    #     """Test fcmpl (compare 2 floats)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     ops.stack.push_op(1/3)
-    #     i2f(ops)
-    #     fcmpl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
+    def test_fcmpl(self):
+        """Test fcmpl (compare 2 floats)"""
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        self.test.stack.push_op(1/3)
+        i2f(self.test)
+        fcmpl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
 
-    #     ops.stack.push_op(1/3)
-    #     i2f(ops)
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fcmpl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 1)
+        self.test.stack.push_op(1/3)
+        i2f(self.test)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fcmpl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 1)
 
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fcmpl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), 0)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fcmpl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), 0)
 
-    #     ops.stack.push_op(numpy.nan)
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fcmpl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
+        self.test.stack.push_op(numpy.nan)
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fcmpl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
 
-    #     ops.stack.push_op(1/7)
-    #     ops.stack.push_op(numpy.nan)
-    #     i2f(ops)
-    #     fcmpl(ops)
-    #     self.assertEqual(ops.stack.pop_op(), -1)
+        self.test.stack.push_op(1/7)
+        self.test.stack.push_op(numpy.nan)
+        i2f(self.test)
+        fcmpl(self.test)
+        self.assertEqual(self.test.stack.pop_op(), -1)
 
-    # def test_fneg(self):
-    #     """test fneg (negate a float)"""
-    #     ops = OpCodes()
-    #     ops.stack.push_op(1/7)
-    #     i2f(ops)
-    #     fneg(ops)
-    #     self.assertEqual(ops.stack.pop_op(), numpy.float32(-1/7))
+    def test_fneg(self):
+        """test fneg (negate a float)"""
+        self.test.stack.push_op(1/7)
+        i2f(self.test)
+        fneg(self.test)
+        self.assertEqual(self.test.stack.pop_op(), numpy.float32(-1/7))
 
-    #     ops.stack.push_op(float("inf"))
-    #     i2f(ops)
-    #     fneg(ops)
-    #     numpy.isneginf(ops.stack.pop_op())
+        self.test.stack.push_op(float("inf"))
+        i2f(self.test)
+        fneg(self.test)
+        numpy.isneginf(self.test.stack.pop_op())
 
-    #     ops.stack.push_op(float("-inf"))
-    #     i2f(ops)
-    #     fneg(ops)
-    #     numpy.isposinf(ops.stack.pop_op())
+        self.test.stack.push_op(float("-inf"))
+        i2f(self.test)
+        fneg(self.test)
+        numpy.isposinf(self.test.stack.pop_op())
 
-    #     ops.stack.push_op(0)
-    #     i2f(ops)
-    #     fneg(ops)
-    #     numpy.negative(ops.stack.pop_op())
+        self.test.stack.push_op(0)
+        i2f(self.test)
+        fneg(self.test)
+        numpy.negative(self.test.stack.pop_op())
 
-    #     ops.stack.push_op(numpy.nan)
-    #     fneg(ops)
-    #     numpy.isnan(ops.stack.pop_op())
+        self.test.stack.push_op(numpy.nan)
+        fneg(self.test)
+        numpy.isnan(self.test.stack.pop_op())
 
-    # def test_fload(self):
-    #     """tests fload method"""
-        
-    #     #tests every load index from 0 to length
-    #     length = len(test.local_array)
-    #     for i in range(0, length):
-    #         fload(test, i)
-    #         self.assertEqual(test.stack.pop_op(), test.local_array[i])
+    def test_fload(self):
+        """tests fload method"""
+        #tests every load index from 0 to length
+        length = len(self.test.stack.local_array)
+        for i in range(0, length):
+            fload(self.test, i)
+            self.assertEqual(self.test.stack.pop_op(), self.test.stack.local_array[i])
 
-    # def test_fload_0(self):
-    #     """tests iload_0 opcode"""
-        
-    #     fload_0(test)
-    #     self.assertEqual(test.stack.pop_op(), test.local_array[0])
+    def test_fload_0(self):
+        """tests iload_0 opcode"""
+        fload_0(self.test)
+        self.assertEqual(self.test.stack.pop_op(), self.test.stack.local_array[0])
 
-    # def test_fload_1(self):
-    #     """tests fload_1 opcode"""
-        
-    #     fload_1(test)
-    #     self.assertEqual(test.stack.pop_op(), test.local_array[1])
+    def test_fload_1(self):
+        """tests fload_1 opcode"""
+        fload_1(self.test)
+        self.assertEqual(self.test.stack.pop_op(), self.test.stack.local_array[1])
 
-    # def test_fload_2(self):
-    #     """tests fload_2 opcode"""
-        
-    #     fload_2(test)
-    #     self.assertEqual(test.stack.pop_op(), test.local_array[2])
+    def test_fload_2(self):
+        """tests fload_2 opcode"""
+        fload_2(self.test)
+        self.assertEqual(self.test.stack.pop_op(), self.test.stack.local_array[2])
 
-    # def test_fload_3(self):
-    #     """tests fload_3 opcode"""
-        
-    #     fload_3(test)
-    #     self.assertEqual(test.stack.pop_op(), test.local_array[3])
+    def test_fload_3(self):
+        """tests fload_3 opcode"""
+        fload_3(self.test)
+        self.assertEqual(self.test.stack.pop_op(), self.test.stack.local_array[3])
 
-    # def test_lconst_0(self):
-    #     """test lconst_0 (pushes 0L to the stack)"""
-    #     ops = OpCodes()
-    #     lconst_0(ops)
-    #     self.assertEqual(numpy.int64(0), ops.stack.pop_op(pop_twice))
+    def test_lconst_0(self):
+        """test lconst_0 (pushes 0L to the stack)"""
+        lconst_0(self.test)
+        self.assertEqual(numpy.int64(0), self.test.stack.pop_op(pop_twice))
 
-    # def test_lconst_1(self):
-    #     """test lconst_1 (pushes 1L to the stack)"""
-    #     ops = OpCodes()
-    #     lconst_1(ops)
-    #     self.assertEqual(numpy.int64(1), ops.stack.pop_op(pop_twice))
+    def test_lconst_1(self):
+        """test lconst_1 (pushes 1L to the stack)"""
+        lconst_1(self.test)
+        self.assertEqual(numpy.int64(1), self.test.stack.pop_op(pop_twice))
 
-    # def test_fconst_0(self):
-    #     """test fconst_0 (pushes 0F to the stack)"""
-    #     ops = OpCodes()
-    #     fconst_0(ops)
-    #     self.assertEqual(numpy.float32(0), ops.stack.pop_op())
+    def test_fconst_0(self):
+        """test fconst_0 (pushes 0F to the stack)"""
+        fconst_0(self.test)
+        self.assertEqual(numpy.float32(0), self.test.stack.pop_op())
 
-    # def test_fconst_1(self):
-    #     """test fconst_1 (pushes 1F to the stack)"""
-    #     ops = OpCodes()
-    #     fconst_1(ops)
-    #     self.assertEqual(numpy.float32(1), ops.stack.pop_op())
+    def test_fconst_1(self):
+        """test fconst_1 (pushes 1F to the stack)"""
+        fconst_1(self.test)
+        self.assertEqual(numpy.float32(1), self.test.stack.pop_op())
 
-    # def test_fconst_2(self):
-    #     """test fconst_2 (pushes 2F to the stack)"""
-    #     ops = OpCodes()
-    #     fconst_2(ops)
-    #     self.assertEqual(numpy.float32(2), ops.stack.pop_op())
+    def test_fconst_2(self):
+        """test fconst_2 (pushes 2F to the stack)"""
+        fconst_2(self.test)
+        self.assertEqual(numpy.float32(2), self.test.stack.pop_op())
 
-    # def test_l2d(self):
-    #     """test l2d (long to double)"""
-    #     ops = OpCodes()
-    #     lconst_1(ops)
-    #     l2d(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.float64)
-    #     self.assertEqual(numpy.float64(1), ops.stack.pop_op(pop_twice))
+    def test_l2d(self):
+        """test l2d (long to double)"""
+        lconst_1(self.test)
+        l2d(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.float64)
+        self.assertEqual(numpy.float64(1), self.test.stack.pop_op(pop_twice))
 
-    # def test_l2f(self):
-    #     """test l2d (long to float)"""
-    #     ops = OpCodes()
-    #     lconst_1(ops)
-    #     l2f(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.float32)
-    #     self.assertEqual(numpy.float32(1), ops.stack.pop_op())
+    def test_l2f(self):
+        """test l2d (long to float)"""
+        lconst_1(self.test)
+        l2f(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.float32)
+        self.assertEqual(numpy.float32(1), self.test.stack.pop_op())
 
-    # def test_l2i(self):
-    #     """test l2i (long to int)"""
-    #     ops = OpCodes()
-    #     lconst_1(ops)
-    #     l2i(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int32)
-    #     self.assertEqual(numpy.int(1), ops.stack.pop_op())
+    def test_l2i(self):
+        """test l2i (long to int)"""
+        lconst_1(self.test)
+        l2i(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int32)
+        self.assertEqual(numpy.int(1), self.test.stack.pop_op())
 
-    # def test_f2d(self):
-    #     """test f2d (float to double)"""
-    #     ops = OpCodes()
-    #     fconst_1(ops)
-    #     f2d(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.float64)
-    #     self.assertEqual(numpy.float64(1), ops.stack.pop_op(pop_twice))
+    def test_f2d(self):
+        """test f2d (float to double)"""
+        fconst_1(self.test)
+        f2d(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.float64)
+        self.assertEqual(numpy.float64(1), self.test.stack.pop_op(pop_twice))
 
-    # def test_f2i(self):
-    #     """test f2i (float to integer)"""
-    #     ops = OpCodes()
-    #     fconst_1(ops)
-    #     f2i(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int32)
-    #     self.assertEqual(numpy.int(1), ops.stack.pop_op())
+    def test_f2i(self):
+        """test f2i (float to integer)"""
+        fconst_1(self.test)
+        f2i(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int32)
+        self.assertEqual(numpy.int(1), self.test.stack.pop_op())
 
-    # def test_f2l(self):
-    #     """test f2l (float to long)"""
-    #     ops = OpCodes()
-    #     fconst_1(ops)
-    #     f2l(ops)
-    #     assert isinstance(ops.stack.peek(), numpy.int64)
-    #     self.assertEqual(numpy.int64(1), ops.stack.pop_op(pop_twice))
+    def test_f2l(self):
+        """test f2l (float to long)"""
+        fconst_1(self.test)
+        f2l(self.test)
+        assert isinstance(self.test.stack.peek(), numpy.int64)
+        self.assertEqual(numpy.int64(1), self.test.stack.pop_op(pop_twice))
 
     # def test_fadd(self):
     #     """tests the fadd opcodes"""
