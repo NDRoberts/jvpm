@@ -17,6 +17,13 @@ class TestOpCodes(unittest.TestCase):
 
     test = Jvpm("jvpm/Java/Test.class")
 
+    def test_bipush(self):
+        """ Test the bipush method which pushes
+        a byte onto the stack.
+        """
+        bipush(self.test, 0x10)
+        self.assertEqual(self.test.stack.peek(), 0x10)
+
     def test_aload(self):
         """tests the aload opcode method"""
 
