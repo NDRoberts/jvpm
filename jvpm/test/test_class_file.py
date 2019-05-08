@@ -44,7 +44,7 @@ class TestClassFile(unittest.TestCase):
 
 
     def test_fixed_values(self):
-        """The Major, Minor, and Magic Numbers should not change."""
+        """Check the set values of the Magic number and the Major and Minor version."""
         self.assertEqual(self.class_file.magic, b'\xca\xfe\xba\xbe')
         self.assertEqual(self.class_file.minor, 0)
         self.assertEqual(self.class_file.major, 56)
