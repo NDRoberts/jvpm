@@ -2,7 +2,7 @@
 # utilizes NumPy package to handle 32 bit int over/underflow in Java
 import numpy  # to get the java-like behavior for arithmetic
 
-from .jvm_stack import JvmStack, pop_twice, push_twice
+from .jvm_stack import pop_twice, push_twice
 
 # shuts off the overflow warnings from numpy
 numpy.seterr(over="ignore", under="ignore")
@@ -459,24 +459,11 @@ def i2s(self):
     self.stack.push_op(numpy.int16(convert_this))
 
 
-def old_getstatic(self):
-    """This is a stub implementation of getstatic.
-It will be expanded in the future if we start loading other classes."""
-    index = self.data[self.byte_count - 2 : self.byte_count]
-    self.constant_pool.load_constant(index, self.stack)
-
 
 def getstatic(self, index_byte_1, index_byte_2):
     """Push a field reference from the Constant Pool to the stack."""
     index = (index_byte_1 << 8) + index_byte_2
     self.stack.push_op(self.class_data.constant_pool[index])
-
-
-def old_ldc(self):
-    """implements ldc"""
-    # take into account the fact that the index for ldc is a single byte
-    index = b"\x00" + self.data[self.byte_count - 1 : self.byte_count]
-    self.constant_pool.load_constant(index, self.stack)
 
 
 def ldc(self, index):
@@ -487,32 +474,6 @@ def ldc(self, index):
         self.stack.push_op(
             self.class_data.constant_pool[string_index]["value"]
         )
-
-
-def old_invokevirtual(self):
-    """implements invokevirtual"""
-    # look up the method to be invoked.
-    methodref = self.constant_pool.lookup_constant(
-        self.data[self.byte_count - 2 : self.byte_count]
-    )
-    # get the name of the class for this method.
-    classref = self.constant_pool.lookup_constant(methodref[1:3])
-    utf8_index = classref[1:]
-    utf8_const = self.constant_pool.lookup_constant(utf8_index)
-    classname = utf8_const[3:].decode("utf-8")
-    # after all that pointer chasing, we still have to do it again to get the
-    # name and type of the method
-    nat_index = methodref[3:]
-    nat_const = self.constant_pool.lookup_constant(nat_index)
-    methodname_index = nat_const[1:3]
-    methodname_const = self.constant_pool.lookup_constant(methodname_index)
-    methodname = methodname_const[3:].decode("utf-8")
-    methodtype_index = nat_const[3:]
-    methodtype_const = self.constant_pool.lookup_constant(methodtype_index)
-    methodtype = methodtype_const[3:].decode("utf-8")
-    # finally, we can invoke the method!
-    official_name = classname + "." + methodname + methodtype
-    self.nmt.call(self, official_name)
 
 
 def invokevirtual(self, index_byte_1, index_byte_2):
@@ -547,14 +508,6 @@ def invokespecial(self, index_byte_1, index_byte_2):
     # return byte_1 + byte_2
     invokevirtual(self, index_byte_1, index_byte_2)
 
-
-def old_new(self):
-    """Find the constant representing the class to be instantiated, then STACK IT"""
-
-    new_constant = self.constant_pool.lookup_constant(
-        self.data[self.byte_count - 2 : self.byte_count]
-    )
-    self.stack.push_op(new_constant)
 
 
 def new(self, index_byte_1, index_byte_2):

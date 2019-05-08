@@ -7,9 +7,10 @@ from jvpm.op_codes import OpCodes
 from jvpm.method_table import *
 from run_jvpm import Jvpm
 
+
 class TestScanner(unittest.TestCase):
     """ Class to test the scanner methods and method_table.py"""
-    test = Jvpm('jvpm/Java/Test.class')
+    tdd_object = Jvpm('jvpm/Java/Test.class')
     # def test_scanner(self):
     #     """method to test the scanner"""
     #     stack = OpCodes()
@@ -22,22 +23,20 @@ class TestScanner(unittest.TestCase):
         """ Test the println method which prints the top
         item from the stack.
         """
-        self.test.stack.push_op(10)
-        self.assertEqual(println(self.test), 10)
+        self.tdd_object.stack.push_op(10)
+        self.assertEqual(println(self.tdd_object), 10)
 
     def test_next_int(self):
         """ Test the next_int method. """
-        self.test.stack.push_op(0)
+        self.tdd_object.stack.push_op(0)
         with patch("builtins.input", side_effect=["10"]):
-            next_int(self.test)
-        self.assertEqual(self.test.stack.pop_op(), 10)
+            next_int(self.tdd_object)
+        self.assertEqual(self.tdd_object.stack.pop_op(), 10)
 
     def test_init(self):
-        """ Test the init method which takes the top two elements
+        """ Will test the init method which takes the top two elements
         off the stack, then pushes a scanner object onto it.
         """
-        self.test.stack.push_op(1)
-        self.test.stack.push_op(1)
-        #init(self.test)
-
-
+        self.tdd_object.stack.push_op(1)
+        self.tdd_object.stack.push_op(1)
+        # init(self.test)
