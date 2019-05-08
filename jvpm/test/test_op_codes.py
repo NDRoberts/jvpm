@@ -15,11 +15,6 @@ numpy.warnings.filterwarnings("ignore")
 class TestOpCodes(unittest.TestCase):
     """ This class tests the op_codes class. """
 
-    # @patch('builtins.print')
-    # def test_op_codes(self, mock_patch):
-    #     """this method performs the op code test"""
-    #     op_code = OpCodes()
-    #     op_code.parse_codes(143)
     test = Jvpm("jvpm/Java/Test.class")
 
     def test_aload(self):
@@ -62,10 +57,6 @@ class TestOpCodes(unittest.TestCase):
         self.assertEqual(
             self.test.stack.peek(), self.test.stack.local_array[3]
         )
-
-    # def test_not_implmented(self):
-    #     """this method tests the OpCodes class"""
-    #     self.assertEqual(OpCodes().interpret(0), 'not implemented')
 
     def test_iconst_m1(self):
         """tests iconst_m1 method, expected value -1"""
@@ -258,10 +249,6 @@ class TestOpCodes(unittest.TestCase):
         self.assertEqual(
             self.test.stack.peek(), self.test.stack.local_array[3]
         )
-
-    # def test_new(self):
-    #     """tests new method"""
-    #     new(test)
 
     def test_add_subtract(self):
         """tests the iadd and isub opcodes"""
