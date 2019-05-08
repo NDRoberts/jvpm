@@ -50,14 +50,17 @@ class TestClassFile(unittest.TestCase):
         self.assertEqual(self.class_file.major, 56)
 
     def test_val_counts(self):
-        """Check that the counts for Constant Pool, Interfaces, Fields, Methods, and Attributes match counts given by invoking javap."""
+        """ Check that the counts for Constant Pool, Interfaces, Fields, Methods, 
+        and Attributes match counts given by invoking javap.
+        """
         self.assertEqual(self.class_file.pool_count, 29)
         self.assertEqual(self.class_file.interfaces_count, 0)
         self.assertEqual(self.class_file.fields_count, 0)
         self.assertEqual(self.class_file.methods_count, 2)
         self.assertEqual(self.class_file.class_attributes_count, 1)
-    
+
     def test_get_u8(self):
+        """ Test the get_u8 method. """
         self.class_file.offset = 0
         bytes = get_u8(self.class_file)
         self.assertEqual(bytes, b'\xca\xfe\xba\xbe\x00\x00\x00\x38')
