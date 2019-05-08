@@ -1,15 +1,15 @@
 """Test the instantiation and methods of the JVPM's ClassFile"""
 import unittest
 from unittest.mock import mock_open, patch
-from jvpm.class_file import ClassFile
+from jvpm.class_file import *
 
 
 class TestClassFile(unittest.TestCase):
     """this class tests the ClassFileClass"""
 
-    def __init__(self):
+    def setUp(self):
 
-        self.bin_data = (
+        mocko = mock_open(read_data=(
             b'\xca\xfe\xba\xbe\x00\x00\x00\x38\x00\x1d\x0a\x00\x06\x00\x0f\x09' +
             b'\x00\x10\x00\x11\x08\x00\x12\x0a\x00\x13\x00\x14\x07\x00\x15\x07' +
             b'\x00\x16\x01\x00\x06\x3c\x69\x6e\x69\x74\x3e\x01\x00\x03\x28\x29' +
@@ -37,26 +37,30 @@ class TestClassFile(unittest.TestCase):
             b'\x00\x00\x00\x09\xb2\x00\x02\x12\x03\xb6\x00\x04\xb1\x00\x00\x00' +
             b'\x01\x00\x0a\x00\x00\x00\x0a\x00\x02\x00\x00\x00\x03\x00\x08\x00' +
             b'\x04\x00\x01\x00\x0d\x00\x00\x00\x02\x00\x0e'
-        )
+        ))
 
-        with patch('__main__.open', mock_open()):
-            with open(self.bin_data, 'rb') as a_class:
-                self.class_file = ClassFile(a_class)
+        with patch('__main__.open', mocko):
+            self.class_file = ClassFile('jvpm/Java/HelloWorld.class')
 
 
-def test_fixed_values(self):
-    """The Major, Minor, and Magic Numbers should not change."""
-    self.assertEqual(self.class_file.magic, b'\xca\xfe\xba\xbe')
-    self.assertEqual(self.class_file.minor, 0)
-    self.assertEqual(self.class_file.major, 56)
+    def test_fixed_values(self):
+        """The Major, Minor, and Magic Numbers should not change."""
+        self.assertEqual(self.class_file.magic, b'\xca\xfe\xba\xbe')
+        self.assertEqual(self.class_file.minor, 0)
+        self.assertEqual(self.class_file.major, 56)
 
-def test_val_counts(self):
-    """Check that the counts for Constant Pool, Interfaces, Fields, Methods, and Attributes match counts given by invoking javap."""
-    self.assertEqual(self.class_file.pool_count, 28)
-    self.assertEqual(self.class_file.interfaces_count, 0)
-    self.assertEqual(self.class_file.fields_count, 0)
-    self.assertEqual(self.class_file.methods_count, 2)
-    self.assertEqual(self.class_file.class_attributes_count, 1)
+    def test_val_counts(self):
+        """Check that the counts for Constant Pool, Interfaces, Fields, Methods, and Attributes match counts given by invoking javap."""
+        self.assertEqual(self.class_file.pool_count, 29)
+        self.assertEqual(self.class_file.interfaces_count, 0)
+        self.assertEqual(self.class_file.fields_count, 0)
+        self.assertEqual(self.class_file.methods_count, 2)
+        self.assertEqual(self.class_file.class_attributes_count, 1)
+    
+    def test_get_u8(self):
+        self.class_file.offset = 0
+        bytes = get_u8(self.class_file)
+        self.assertEqual(bytes, b'\xca\xfe\xba\xbe\x00\x00\x00\x38')
 
 
     # def setUp(self):
