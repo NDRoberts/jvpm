@@ -1,10 +1,8 @@
 """Test the instantiation and methods of the JVPM's ClassFile"""
-# Disables pylint "unused wildcard import" error
-# pylint: disable=W0614
-
+# Disables pylint for unused wildcard import and too many public methods.
+# pylint: disable=W0614, R0904
 import unittest
 from unittest.mock import mock_open, patch
-
 from jvpm.class_file import ClassFile, get_u8
 
 

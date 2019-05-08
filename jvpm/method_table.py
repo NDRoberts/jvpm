@@ -1,5 +1,6 @@
 """This module contains implementations of native methods like println"""
-
+# Disable pylint warning for too few public methods. \
+# pylint: disable=R0903
 
 class MethodTable:
     """This module contains implementations of native methods like println"""

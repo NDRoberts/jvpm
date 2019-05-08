@@ -1,5 +1,7 @@
 """This module contains the class and methods that parse a java file."""
 import struct
+# Disables pylint errors for too many instance methods, too few public methods.
+# pylint: disable=R0902, R0903
 
 
 class ClassFile:
