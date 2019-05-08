@@ -3,8 +3,7 @@
 # pylint: disable=W0611
 import unittest
 from unittest.mock import patch
-from jvpm.op_codes import OpCodes
-from jvpm.method_table import *
+from jvpm.method_table import println, next_int
 from run_jvpm import Jvpm
 
 
