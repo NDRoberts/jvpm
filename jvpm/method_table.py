@@ -29,7 +29,9 @@ def println(self):
 
 
 def init(self):
-    """ Take the top two items off the stack and push a scanner object on the stack. """
+    """ Take the top two items off the stack and
+    push a scanner object on the stack.
+    """
     self.stack.pop_op()
     self.stack.pop_op()
     self.stack.push_op(self.method["class_name"]["value"])

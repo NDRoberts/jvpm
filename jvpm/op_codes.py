@@ -132,7 +132,7 @@ class OpCodes:
         args = []
         if self.table[value][1] > 1:
             args = self.data[
-                self.byte_count + 1 : self.byte_count + self.table[value][1]
+                self.byte_count + 1: self.byte_count + self.table[value][1]
             ]
         self.byte_count += self.table[value][1]
         # print('Doing this:', self.table[value][0], 'with args', args)
@@ -322,7 +322,9 @@ def fstore_3(self):
 
 
 def iinc(self, index, constant):
-    """implements iinc opcode, increments local variable at <index> by constant"""
+    """ Implements iinc opcode, increments local
+    variable at <index> by constant.
+    """
     self.stack.local_array[index] += constant
 
 
@@ -411,7 +413,9 @@ def ishr(self):
 
 
 def iushr(self):
-    """ Perform bitwise LOGICAL SHIFT RIGHT on the top two operands on the stack. """
+    """ Perform bitwise LOGICAL SHIFT RIGHT on
+    the top two operands on the stack.
+    """
     this_val = self.stack.pop_op()
     that_val = self.stack.pop_op()
     val = 0
@@ -424,13 +428,16 @@ def iushr(self):
 
 
 def i2b(self):
-    """convert int on top of stack to byte, and push it(to the stack)"""
+    """ Convert top of stack from int to byte,
+     then push it back onto stack. """
     convert_this = self.stack.pop_op()
     self.stack.push_op(numpy.int8(convert_this))
 
 
 def i2c(self):
-    """convert int on top of stack to character, and push it. Push it real good"""
+    """ Convert int on top of stack to character,
+    and push it, push it real good.
+    """
     convert_this = self.stack.pop_op()
     self.stack.push_op(chr(convert_this))
 

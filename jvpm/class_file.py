@@ -6,7 +6,9 @@ class ClassFile:
     """This class reads in a Java .class file and parses its values."""
 
     def __init__(self, name):
-        """Instantiate a ClassFile and read its constants, fields, methods, & attributes"""
+        """Instantiate a ClassFile and read its constants,
+        fields, methods, & attributes
+        """
         print(name)
         with open(name, "rb") as binary_file:
             self.data = bytes(binary_file.read())
@@ -54,7 +56,6 @@ class ClassFile:
                 self.class_attributes = get_attributes(
                     self, self.class_attributes_count
                 )
-
 
 
 def get_constant_pool(self):
@@ -159,7 +160,7 @@ def get_constant_pool(self):
         tag = get_u1(self)
         constant = tag_table.get(tag, None).copy()
         for aspect in constant:
-            if aspect is not "type":
+            if aspect != "type":
                 constant[aspect] = constant[aspect]()
         pool[index] = constant
         if tag == 1 and constant["value"] == "Code":
@@ -203,7 +204,9 @@ def get_attributes(self, count):
 
 
 def get_an_attribute(self):
-    """Return the index, length, and info of a single attribute as a dictionary"""
+    """Return the index, length, and info of a
+    single attribute as a dictionary
+    """
     attribute = {}
     attribute["name_index"] = int.from_bytes(get_u2(self), byteorder="big")
     attribute["length"] = int.from_bytes(get_u4(self), byteorder="big")
@@ -225,7 +228,7 @@ def get_u1(self):
 
 def get_u2(self):
     """Fetch a two-byte value from the class data"""
-    value = self.data[self.offset : self.offset + 2]
+    value = self.data[self.offset: self.offset + 2]
     self.offset += 2
     # print('Fetched',value)
     return value
@@ -233,7 +236,7 @@ def get_u2(self):
 
 def get_u4(self):
     """Fetch a four-byte value from the class data"""
-    value = self.data[self.offset : self.offset + 4]
+    value = self.data[self.offset: self.offset + 4]
     self.offset += 4
     # print('Fetched',value)
     return value
@@ -241,7 +244,7 @@ def get_u4(self):
 
 def get_u8(self):
     """Fetch an eight-byte value from the class data"""
-    value = self.data[self.offset : self.offset + 8]
+    value = self.data[self.offset: self.offset + 8]
     self.offset += 8
     # print('Fetched',value)
     return value
@@ -254,7 +257,7 @@ def get_extended(self, length=0):
     """
     if not length:
         length = int.from_bytes(get_u2(self), byteorder="big")
-    value = self.data[self.offset : self.offset + length]
+    value = self.data[self.offset: self.offset + length]
     self.offset += length
     # print('Fetched',value)
     return value

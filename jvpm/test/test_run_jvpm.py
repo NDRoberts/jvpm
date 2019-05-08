@@ -13,7 +13,7 @@ class TestRunJvpm(unittest.TestCase):
     """A battery of tests to check instantiation of a JVPM."""
 
     def test_direct_class(self):
-        """Attempt to instantiate a JVPM by directly passing a Java class file."""
+        """ Instantiate a JVPM by directly passing a Java class file."""
         test = Jvpm("jvpm/Java/HelloWorld.class")
         self.assertIsInstance(test, Jvpm)
 
@@ -25,7 +25,7 @@ class TestRunJvpm(unittest.TestCase):
             self.assertIsInstance(test, Jvpm)
 
     def test_no_args(self):
-        """Attempt to instantiate a JVPM without providing a Java class file."""
+        """ Instantiate a JVPM without providing a Java class file."""
         test_args = ["run_jvpm.py"]
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(SystemExit) as bad_construction:

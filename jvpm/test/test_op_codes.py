@@ -1,8 +1,7 @@
 """this is a test for op_codes"""
 # utilizes NumPy package to handle 32 bit int over/underflow in Java
-# Disables pylint error W0611, unused mock patch import
-# pylint: disable=W0611
-# pylint: disable=W0614
+# Disable pylint unused mock import, wilcard-import warnings
+# pylint: disable=W0611, W0614, W0401
 import unittest
 from unittest.mock import patch, call
 import numpy

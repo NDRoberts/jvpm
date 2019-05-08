@@ -1,11 +1,12 @@
 # The following is a 'shbang' line which makes this script directly executable
-#!python
+# !python
 
 from jvpm.jvm_stack import JvmStack
 from jvpm.class_file import ClassFile
 from jvpm.method_table import MethodTable
 from jvpm.op_codes import OpCodes
 import sys
+
 
 class Jvpm:
 
