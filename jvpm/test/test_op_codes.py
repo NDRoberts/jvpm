@@ -927,3 +927,11 @@ class TestOpCodes(unittest.TestCase):
         self.test.stack.push_op(numpy.int64(5), push_twice)
         lrem(self.test)
         self.assertEqual(self.test.stack.pop_op(pop_twice), 0)
+
+    def test_ret(self):
+        """ Test the ret opcode which returns the contents of
+        the local variable at index.
+        """
+        self.test.stack.local_array[0] = 0
+        test_value = ret(self.test, 0)
+        self.assertEqual(self.test.stack.local_array[0], test_value)

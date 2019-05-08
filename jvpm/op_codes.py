@@ -204,9 +204,11 @@ def iload_3(self):
 
 
 def ret(self, index):
-    """this function will eventually implement the ret opcode"""
-    self.stack.push_op(1)
-    self.stack.pop_op()
+    """ Implement the ret opcode, return from subroutine. Write
+    returnAddress of the current frame from local variable at
+    index to the JVM's pc register. """
+    return self.stack.local_array[index]
+
 
 
 def iconst_m1(self):
