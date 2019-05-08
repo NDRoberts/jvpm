@@ -459,7 +459,6 @@ def i2s(self):
     self.stack.push_op(numpy.int16(convert_this))
 
 
-
 def getstatic(self, index_byte_1, index_byte_2):
     """Push a field reference from the Constant Pool to the stack."""
     index = (index_byte_1 << 8) + index_byte_2
@@ -507,7 +506,6 @@ def invokespecial(self, index_byte_1, index_byte_2):
     # byte_2 = self.data[self.byte_count + 2]
     # return byte_1 + byte_2
     invokevirtual(self, index_byte_1, index_byte_2)
-
 
 
 def new(self, index_byte_1, index_byte_2):
