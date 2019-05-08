@@ -33,7 +33,7 @@ def init(self):
     self.stack.push_op(self.method['class_name']['value'])
 
 def next_int(self):
-    """ Take the top element of the stack.
+    """ Take the top element off the stack.
     Read in an int and pushes that int onto the stack
     """
     self.stack.pop_op()

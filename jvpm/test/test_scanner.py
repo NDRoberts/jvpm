@@ -18,14 +18,6 @@ class TestScanner(unittest.TestCase):
     #     scanner(stack)
     #     self.assertEqual(stack.stack.pop_op(), 'scanner')
 
-    # def test_next_int(self):
-    #     """method to test the scanner"""
-    #     stack = OpCodes()
-    #     stack.stack.push_op(0)
-    #     with patch("builtins.input", side_effect=["10"]):
-    #         next_int(stack)
-    #     self.assertEqual(stack.stack.pop_op(), 10)
-
     def test_println(self):
         """ Test the println method which prints the top
         item from the stack.
@@ -39,3 +31,13 @@ class TestScanner(unittest.TestCase):
         with patch("builtins.input", side_effect=["10"]):
             next_int(self.test)
         self.assertEqual(self.test.stack.pop_op(), 10)
+
+    def test_init(self):
+        """ Test the init method which takes the top two elements
+        off the stack, then pushes a scanner object onto it.
+        """
+        self.test.stack.push_op(1)
+        self.test.stack.push_op(1)
+        #init(self.test)
+
+
