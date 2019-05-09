@@ -206,7 +206,7 @@ def iload_3(self):
 def ret(self, index):
     """ Implement the ret opcode, return from subroutine. Write
     returnAddress of the current frame from local variable at
-    index to the JVM's pc register. """
+    index to the JVM's pc register. For now, just return it. """
     return self.stack.local_array[index]
 
 
