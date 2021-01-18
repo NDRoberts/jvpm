@@ -68,6 +68,7 @@ The following are our most recent results.
     LOC: 265
     LLOC: 119
     SLOC: 203
+    ...
     ** Total **
         LOC: 2302
         LLOC: 1475
