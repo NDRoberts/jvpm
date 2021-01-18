@@ -1,48 +1,53 @@
 """This module contains implementations of native methods like println"""
-
+# Disable pylint warning for too few public methods. \
+# pylint: disable=R0903
 
 class MethodTable:
     """This module contains implementations of native methods like println"""
 
-    def __init__(self):
+    def __init__(self, stack):
         """constructor"""
+        self.method = ''
+        self.stack = stack
         self.table = {
-            "java/io/PrintStream.println(Ljava/lang/String;)V": println,
-            "java/io/PrintStream.println(I)V": println,
-            "java/util/Scanner.<init>(Ljava/io/InputStream;)V": scanner,
-            "java/util/Scanner.nextInt()I": next_int}
+            "println": println,
+            "<init>": init,
+            "nextInt": next_int,
+            "close": close,
+        }
 
-    def call(self, op_codes, official_name):
-        """calls a method from the table based on its name.
-        op_codes is the OpCodesObject that will be used to
-        run the method"""
-        self.table[official_name](op_codes)
-
-    def mph3(self):
-        """pylint, quit complaining"""
-        return len(self.table)
+    def call(self, method):
+        """ Implement the call method. """
+        self.method = method
+        return self.table[self.method["method_name"]["value"]](self)
 
 
-def println(op_codes):
-    """This function causes the jvm to print to the screen"""
-    to_be_printed = op_codes.stack.pop_op()
-# not used, but required so future opcodes work properly
-    op_codes.stack.pop_op()
-# and finally, the big print!
-    print(to_be_printed)
+def println(self):
+    """ This function causes the jvm to print to the screen. """
+    print_value = self.stack.pop_op()
+    print(print_value)
+    return print_value
 
 
-def scanner(stack):
-    """take the top two items off the stack and push a scanner
-    object on the stack"""
-    stack.stack.pop_op()
-    stack.stack.pop_op()
-    stack.stack.push_op('scanner')
+def init(self):
+    """ Take the top two items off the stack and
+    push a scanner object on the stack.
+    """
+    self.stack.pop_op()
+    self.stack.pop_op()
+    self.stack.push_op(self.method["class_name"]["value"])
 
 
-def next_int(stack):
-    """take the top element of the stack, read in an int
-    and pushes that int onto the stack"""
-    stack.stack.pop_op()
+def next_int(self):
+    """ Take the top element off the stack.
+    Read in an int and pushes that int onto the stack
+    """
+    self.stack.pop_op()
     i = int(input())
-    stack.stack.push_op(i)
+    self.stack.push_op(i)
+
+
+def close(self):
+    """ Close an opened instance of a file or scanner, probably. """
+    while self.stack.peek():
+        self.stack.pop_op()
