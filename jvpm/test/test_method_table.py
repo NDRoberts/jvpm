@@ -15,7 +15,7 @@ class TestMethods(unittest.TestCase):
         self.tdd_object = Jvpm("jvpm/Java/Test.class")
 
     def test_println(self):
-        """ Test the println method which prints the top
+        """Test the println method which prints the top
         item from the stack.
         """
         self.tdd_object.stack.push_op(10)
@@ -29,7 +29,7 @@ class TestMethods(unittest.TestCase):
         self.assertEqual(self.tdd_object.stack.pop_op(), 10)
 
     def test_init(self):
-        """ Will test the init method which takes the top two elements
+        """Will test the init method which takes the top two elements
         off the stack, then pushes a scanner object onto it.
         """
         self.tdd_object.stack.push_op(1)

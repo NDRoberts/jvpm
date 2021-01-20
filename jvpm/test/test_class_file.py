@@ -53,7 +53,7 @@ class TestClassFile(unittest.TestCase):
         self.assertEqual(self.class_file.major, 56)
 
     def test_val_counts(self):
-        """ Check that the counts for Constant Pool, Interfaces, Fields, Methods,
+        """Check that the counts for Constant Pool, Interfaces, Fields, Methods,
         and Attributes match counts given by invoking javap.
         """
         self.assertEqual(self.class_file.pool_count, 29)

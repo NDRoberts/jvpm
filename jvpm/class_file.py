@@ -1,5 +1,6 @@
 """This module contains the class and methods that parse a java file."""
 import struct
+
 # Disables pylint errors for too many instance methods, too few public methods.
 # pylint: disable=R0902, R0903
 
@@ -18,8 +19,8 @@ class ClassFile:
             self.i_am_code = 0
             self.run_code = bytearray(0x00)
             self.magic = get_u4(self)
-            self.minor = int.from_bytes(get_u2(self), byteorder='big')
-            self.major = int.from_bytes(get_u2(self), byteorder='big')
+            self.minor = int.from_bytes(get_u2(self), byteorder="big")
+            self.major = int.from_bytes(get_u2(self), byteorder="big")
             # print('About to parse the CONSTANT POOL...')
             self.pool_count = int.from_bytes(get_u2(self), byteorder="big")
 
@@ -31,9 +32,7 @@ class ClassFile:
             self.super_class = get_u2(self)
 
             # print('About to parse the INTERFACES...')
-            self.interfaces_count = int.from_bytes(
-                get_u2(self), byteorder="big"
-            )
+            self.interfaces_count = int.from_bytes(get_u2(self), byteorder="big")
             self.interfaces_begin = self.offset
             if self.interfaces_count:
                 self.interfaces = get_info(self, self.interfaces_count)
@@ -51,9 +50,7 @@ class ClassFile:
                 self.methods = get_info(self, self.methods_count)
 
             # print('About to parse the CLASS ATTRIBUTES...')
-            self.class_attributes_count = int.from_bytes(
-                get_u2(self), byteorder="big"
-            )
+            self.class_attributes_count = int.from_bytes(get_u2(self), byteorder="big")
             if self.class_attributes_count:
                 self.class_attributes = get_attributes(
                     self, self.class_attributes_count
@@ -62,8 +59,8 @@ class ClassFile:
 
 def get_constant_pool(self):
     """Collect the Constant Pool from a .class file as a list.
-     Each constant is in a Python-readable format
-     """
+    Each constant is in a Python-readable format
+    """
     tag_table = {
         1: {
             "type": "utf-8",
@@ -87,64 +84,46 @@ def get_constant_pool(self):
         },
         7: {
             "type": "Class",
-            "name_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "name_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
         },
         8: {
             "type": "String",
-            "string_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "string_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
         },
         9: {
             "type": "Fieldref",
-            "class_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "class_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
             "name_and_type_index": lambda: int.from_bytes(
                 get_u2(self), byteorder="big"
             ),
         },
         10: {
             "type": "Methodref",
-            "class_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "class_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
             "name_and_type_index": lambda: int.from_bytes(
                 get_u2(self), byteorder="big"
             ),
         },
         11: {
             "type": "InterfaceMethodref",
-            "class_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "class_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
             "name_and_type_index": lambda: int.from_bytes(
                 get_u2(self), byteorder="big"
             ),
         },
         12: {
             "type": "NameAndType",
-            "name_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
-            "descriptor_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "name_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
+            "descriptor_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
         },
         15: {
             "type": "MethodHandle",
             "reference_kind": lambda: get_u1(self),
-            "reference_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "reference_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
         },
         16: {
             "type": "MethodType",
-            "descriptor_index": lambda: int.from_bytes(
-                get_u2(self), byteorder="big"
-            ),
+            "descriptor_index": lambda: int.from_bytes(get_u2(self), byteorder="big"),
         },
         18: {
             "type": "InvokeDynamic",
@@ -179,15 +158,9 @@ def get_info(self, count):
         info[val] = {}
         info[val]["access_flags"] = get_u2(self)
         info[val]["name_index"] = int.from_bytes(get_u2(self), byteorder="big")
-        info[val]["descriptor_index"] = int.from_bytes(
-            get_u2(self), byteorder="big"
-        )
-        info[val]["attributes_count"] = int.from_bytes(
-            get_u2(self), byteorder="big"
-        )
-        info[val]["attributes"] = get_attributes(
-            self, info[val]["attributes_count"]
-        )
+        info[val]["descriptor_index"] = int.from_bytes(get_u2(self), byteorder="big")
+        info[val]["attributes_count"] = int.from_bytes(get_u2(self), byteorder="big")
+        info[val]["attributes"] = get_attributes(self, info[val]["attributes_count"])
     return info
 
 
@@ -230,7 +203,7 @@ def get_u1(self):
 
 def get_u2(self):
     """Fetch a two-byte value from the class data"""
-    value = self.data[self.offset: self.offset + 2]
+    value = self.data[self.offset : self.offset + 2]
     self.offset += 2
     # print('Fetched',value)
     return value
@@ -238,7 +211,7 @@ def get_u2(self):
 
 def get_u4(self):
     """Fetch a four-byte value from the class data"""
-    value = self.data[self.offset: self.offset + 4]
+    value = self.data[self.offset : self.offset + 4]
     self.offset += 4
     # print('Fetched',value)
     return value
@@ -246,7 +219,7 @@ def get_u4(self):
 
 def get_u8(self):
     """Fetch an eight-byte value from the class data"""
-    value = self.data[self.offset: self.offset + 8]
+    value = self.data[self.offset : self.offset + 8]
     self.offset += 8
     # print('Fetched',value)
     return value
@@ -259,7 +232,7 @@ def get_extended(self, length=0):
     """
     if not length:
         length = int.from_bytes(get_u2(self), byteorder="big")
-    value = self.data[self.offset: self.offset + length]
+    value = self.data[self.offset : self.offset + length]
     self.offset += length
     # print('Fetched',value)
     return value

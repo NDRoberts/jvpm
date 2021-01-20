@@ -9,7 +9,6 @@ class JvmStack:
         self.stack = []
         self.local_array = [0, 1, 2, 3]
 
-
     def push_op(self, obj, push_strategy=lambda stack, obj: stack.append(obj)):
         """Pushes one operand onto the top of the stack. If the stack is empty,
         this method raises an EmptyStackError. Push_strategy is a function that
@@ -18,7 +17,6 @@ class JvmStack:
         """
         push_strategy(self.stack, obj)
 
-
     def pop_helper(self):
         """Pops one object off of the stack and then returns it."""
         if self.stack:
@@ -26,8 +24,8 @@ class JvmStack:
         raise EmptyStackError("Can't pop from an empty stack")
 
     def pop_op(self, pop_strategy=lambda stack: stack.pop_helper()):
-        """ Modify the original pop_op. It enables
-        the use of different popping strategies. """
+        """Modify the original pop_op. It enables
+        the use of different popping strategies."""
         return pop_strategy(self)
 
     def peek(self):

@@ -2,12 +2,13 @@
 # Disable pylint warning for too few public methods. \
 # pylint: disable=R0903
 
+
 class MethodTable:
     """This module contains implementations of native methods like println"""
 
     def __init__(self, stack):
         """constructor"""
-        self.method = ''
+        self.method = ""
         self.stack = stack
         self.table = {
             "println": println,
@@ -30,7 +31,7 @@ def println(self):
 
 
 def init(self):
-    """ Take the top two items off the stack and
+    """Take the top two items off the stack and
     push a scanner object on the stack.
     """
     self.stack.pop_op()
@@ -39,7 +40,7 @@ def init(self):
 
 
 def next_int(self):
-    """ Take the top element off the stack.
+    """Take the top element off the stack.
     Read in an int and pushes that int onto the stack
     """
     self.stack.pop_op()
